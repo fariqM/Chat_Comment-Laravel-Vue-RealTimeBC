@@ -172,9 +172,7 @@
 </template>
 
 <script>
-// <script script>
-// import "../../../../../public/assets/js/sidebar.script.js";
-// import "../../../../public/assets/js/sidebar.script.js";
+import { mapActions, mapGetters } from "vuex";
 import ChatApp from "../../store/chat/ChatStore";
 
 export default {
@@ -268,9 +266,7 @@ export default {
 		this.$store.registerModule("chat", ChatApp);
 	},
 	computed: {
-		histories() {
-			return this.$store.getters["chat/getHistory"];
-		},
+		...mapGetters({ histories: "chat/getHistory" })
 	},
 	mounted() {
 		this.chatPreloader();
@@ -278,8 +274,9 @@ export default {
 		this.getHistories();
 	},
 	methods: {
+		...mapActions(["chat/setChatHistory"]),
 		getHistories() {
-			this.history = this.$store.getters['chat/getHistory'];
+			this.history = this.$store.getters["chat/getHistory"];
 		},
 		scrollDownChat() {
 			this.$refs["vs"].scrollTo(
@@ -300,7 +297,8 @@ export default {
 			};
 			messages.time = s.toLocaleTimeString();
 			messages.message = this.form.message;
-			this.$store.dispatch("chat/setChatHistory", messages)
+			this["chat/setChatHistory"](messages);
+			// this.$store.dispatch("chat/setChatHistory", messages)
 			this.form.message = "";
 			setTimeout(() => this.scrollDownChat(), 70);
 		},

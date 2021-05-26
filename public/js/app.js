@@ -2644,7 +2644,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _store_chat_ChatStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../store/chat/ChatStore */ "./resources/js/store/chat/ChatStore.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2818,9 +2825,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-// <script script>
-// import "../../../../../public/assets/js/sidebar.script.js";
-// import "../../../../public/assets/js/sidebar.script.js";
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2906,11 +2911,9 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.$store.registerModule("chat", _store_chat_ChatStore__WEBPACK_IMPORTED_MODULE_0__.default);
   },
-  computed: {
-    histories: function histories() {
-      return this.$store.getters["chat/getHistory"];
-    }
-  },
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)({
+    histories: "chat/getHistory"
+  })),
   mounted: function mounted() {
     var _this = this;
 
@@ -2920,9 +2923,9 @@ __webpack_require__.r(__webpack_exports__);
     }, 70);
     this.getHistories();
   },
-  methods: {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["chat/setChatHistory"])), {}, {
     getHistories: function getHistories() {
-      this.history = this.$store.getters['chat/getHistory'];
+      this.history = this.$store.getters["chat/getHistory"];
     },
     scrollDownChat: function scrollDownChat() {
       this.$refs["vs"].scrollTo({
@@ -2941,7 +2944,8 @@ __webpack_require__.r(__webpack_exports__);
       };
       messages.time = s.toLocaleTimeString();
       messages.message = this.form.message;
-      this.$store.dispatch("chat/setChatHistory", messages);
+      this["chat/setChatHistory"](messages); // this.$store.dispatch("chat/setChatHistory", messages)
+
       this.form.message = "";
       setTimeout(function () {
         return _this2.scrollDownChat();
@@ -3014,7 +3018,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
     }
-  }
+  })
 });
 
 /***/ }),
@@ -3357,6 +3361,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }, _callee);
     }))();
+  },
+  setConverse: function setConverse(state, payload) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              state.commit("setConverse", payload);
+
+            case 1:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
   }
 });
 
@@ -3379,6 +3399,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   getChekChat: function getChekChat(state) {
     return state.ngetest;
+  },
+  getConverse: function getConverse(state) {
+    return state.converse;
   }
 });
 
@@ -3398,6 +3421,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   setChatHistory: function setChatHistory(state, payload) {
     state.history.push(payload);
+  },
+  setConverse: function setConverse(state, payload) {
+    state.converse.push(payload);
   }
 });
 
@@ -3415,27 +3441,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  history: [{
-    user_id: 1,
-    user_name: "Cak Mad",
-    message: "sembarang wes asdasdasdjkasjdkajskdjkj",
-    time: "28 minutes ago"
-  }, {
-    user_id: 2,
-    user_name: "Cak Dul",
-    message: "asdasdasdasd",
-    time: "26 minutes ago"
-  }, {
-    user_id: 1,
-    user_name: "Cak Mad",
-    message: "hallo cak piye kabare",
-    time: "24 minutes ago"
-  }, {
-    user_id: 2,
-    user_name: "Cak Dul",
-    message: "blumm",
-    time: "22 minutes ago"
-  }],
+  history: [],
+  converse: [],
   ngetest: "testing chat state"
 });
 
