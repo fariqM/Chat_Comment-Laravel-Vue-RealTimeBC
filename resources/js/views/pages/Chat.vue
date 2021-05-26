@@ -10,6 +10,7 @@
 					</a>
 					<div class="form-group m-0 flex-grow-1">
 						<input
+							v-model="contactSearch"
 							type="text"
 							class="form-control form-control-rounded"
 							id="search"
@@ -27,10 +28,10 @@
 							Recent
 						</div>
 
-						<template v-for="(converse, idx) in converses">
+						<template v-for="(converse, idx) in filteredCOntact">
 							<div
 								:key="idx"
-								@click="contactClick"
+								@click="contactClick(converse)"
 								:class="{ online: converse.isActive }"
 								class="p-3 d-flex align-items-center border-bottom contact"
 							>
@@ -80,98 +81,109 @@
 			</div>
 		</div>
 		<div data-sidebar-content="chat" class="chat-content-wrap">
-			<div class="d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar">
-				<a data-sidebar-toggle="chat" class="link-icon d-md-none">
-					<i class="icon-regular i-Right ml-0 mr-3"></i>
-				</a>
-				<div class="d-flex align-items-center">
-					<img
-						:src="'/assets/images/faces/13.jpg'"
-						alt=""
-						class="avatar-sm rounded-circle mr-2"
-					/>
-					<p class="m-0 text-title text-16 flex-grow-1">Frank Powell</p>
-				</div>
-			</div>
-
-			<div class="chat-content perfect-scrollbar chat-room-container" data-suppress-scroll-x="true">
-				
-				<myScroll :ops="ops" ref="vs">
-					<div
-						v-for="(item, idx) in histories"
-						:key="idx"
-						class="costume-container-chat-item"
-					>
-						<!-- Your Chat -->
-						<div v-if="item.user_id == current_user_id" class="d-flex mb-4">
-							<div class="message flex-grow-1 chat-buble">
-								<div class="d-flex">
-									<p class="mb-1 text-title text-16 flex-grow-1">
-										{{ item.user_name }}
-									</p>
-									<span class="text-small text-muted"> {{ item.time }} </span>
-								</div>
-								<p class="m-0">
-									{{ item.message }}
-								</p>
-							</div>
-							<img
-								:src="'/assets/images/faces/13.jpg'"
-								alt=""
-								class="avatar-sm rounded-circle ml-3"
-							/>
-						</div>
-
-						<!-- Someone else Chat -->
-						<div class="d-flex mb-4 user">
-							<img
-								:src="'/assets/images/faces/1.jpg'"
-								alt=""
-								class="avatar-sm rounded-circle mr-3"
-							/>
-							<div class="message flex-grow-1 chat-buble">
-								<div class="d-flex">
-									<p class="mb-1 text-title text-16 flex-grow-1">
-										{{ item.user_name }}
-									</p>
-									<span class="text-small text-muted">{{ item.time }}</span>
-								</div>
-								<p class="m-0">{{ item.message }}.</p>
-							</div>
-						</div>
+			<template v-if="current_contact.isChatting">
+				<div
+					class="d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar"
+				>
+					<a data-sidebar-toggle="chat" class="link-icon d-md-none">
+						<i class="icon-regular i-Right ml-0 mr-3"></i>
+					</a>
+					<div class="d-flex align-items-center">
+						<img
+							alt=""
+							v-bind:src="current_contact.pict"
+							class="avatar-sm rounded-circle mr-2"
+						/>
+						<p class="m-0 text-title text-16 flex-grow-1">
+							{{ current_contact.name }}
+						</p>
 					</div>
-				</myScroll>
-			</div>
-
-			<div class="card">
-				<div class="pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area">
-					<form @submit.prevent="sendMessage" class="inputForm">
-						<div class="form-group">
-							<textarea
-								v-model="form.message"
-								class="form-control form-control-rounded"
-								placeholder="Type your message"
-								name="message"
-								id="message"
-								cols="30"
-								rows="3"
-							></textarea>
-						</div>
-						<div class="d-flex">
-							<div class="flex-grow-1"></div>
-							<button class="btn btn-icon btn-rounded btn-primary mr-2">
-								<i class="i-Paper-Plane"></i>
-							</button>
-							<button
-								class="btn btn-icon btn-rounded btn-outline-primary"
-								type="button"
-							>
-								<i class="i-Add-File"></i>
-							</button>
-						</div>
-					</form>
 				</div>
-			</div>
+
+				<div
+					class="chat-content perfect-scrollbar chat-room-container"
+					data-suppress-scroll-x="true"
+				>
+					<myScroll :ops="ops" ref="vs">
+						<div
+							v-for="(item, idx) in histories"
+							:key="idx"
+							class="costume-container-chat-item"
+						>
+							<!-- Your Chat -->
+							<div v-if="item.user_id == current_user_id" class="d-flex mb-4">
+								<div class="message flex-grow-1 chat-buble">
+									<div class="d-flex">
+										<p class="mb-1 text-title text-16 flex-grow-1">
+											{{ item.user_name }}
+										</p>
+										<span class="text-small text-muted"> {{ item.time }} </span>
+									</div>
+									<p class="m-0">
+										{{ item.message }}
+									</p>
+								</div>
+								<img
+									:src="'/assets/images/faces/13.jpg'"
+									alt=""
+									class="avatar-sm rounded-circle ml-3"
+								/>
+							</div>
+
+							<!-- Someone else Chat -->
+							<div v-else class="d-flex mb-4 user">
+								<img
+									:src="'/assets/images/faces/1.jpg'"
+									alt=""
+									class="avatar-sm rounded-circle mr-3"
+								/>
+								<div class="message flex-grow-1 chat-buble">
+									<div class="d-flex">
+										<p class="mb-1 text-title text-16 flex-grow-1">
+											{{ item.user_name }}
+										</p>
+										<span class="text-small text-muted">{{ item.time }}</span>
+									</div>
+									<p class="m-0">{{ item.message }}.</p>
+								</div>
+							</div>
+						</div>
+					</myScroll>
+				</div>
+
+				<div class="card">
+					<div class="pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area">
+						<form @submit.prevent="sendMessage" class="inputForm">
+							<div class="form-group">
+								<textarea
+									v-model="form.message"
+									class="form-control form-control-rounded"
+									placeholder="Type your message"
+									name="message"
+									id="message"
+									cols="30"
+									rows="3"
+								></textarea>
+							</div>
+							<div class="d-flex">
+								<div class="flex-grow-1"></div>
+								<button class="btn btn-icon btn-rounded btn-primary mr-2">
+									<i class="i-Paper-Plane"></i>
+								</button>
+								<button
+									class="btn btn-icon btn-rounded btn-outline-primary"
+									type="button"
+								>
+									<i class="i-Add-File"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</template>
+			<template v-else>
+				<div class="default-chat"></div>
+			</template>
 		</div>
 	</div>
 </template>
@@ -179,14 +191,22 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import ChatApp from "../../store/chat/ChatStore";
-import contactscroll from 'vuescroll';
+import contactscroll from "vuescroll";
 
 export default {
 	components: {
-      contactscroll
-    },
+		contactscroll,
+	},
 	data() {
 		return {
+			contactSearch:"",
+			current_contact: {
+				isChatting: false,
+				pict: "/assets/images/logo.png",
+				name: "",
+				isActive: true,
+				converse_id: "",
+			},
 			form: {
 				user_id: 1,
 				user_name: "Cak Mad",
@@ -245,7 +265,7 @@ export default {
 					speed: 300,
 					easing: undefined,
 					verticalNativeBarPos: "right",
-					maxHeight: '100%',
+					maxHeight: "100%",
 				},
 				rail: {
 					background: "#662489",
@@ -285,7 +305,7 @@ export default {
 					speed: 300,
 					easing: undefined,
 					verticalNativeBarPos: "right",
-					maxWidth:'100%',
+					maxWidth: "100%",
 					maxHeight: 250,
 				},
 				rail: {
@@ -315,20 +335,28 @@ export default {
 	created() {
 		this.$store.registerModule("chat", ChatApp);
 	},
-	beforeDestroy(){
-		this.$store.unregisterModule('chat')
+	beforeDestroy() {
+		this.$store.unregisterModule("chat");
 	},
 	computed: {
 		...mapGetters({ histories: "chat/getHistory" }),
 		...mapGetters({ converses: "chat/getConverse" }),
+		filteredCOntact: function(){
+			return this.converses.filter((converse) => {
+				return converse.contact_name.toLowerCase().match(this.contactSearch)
+			})
+		}
 	},
 	mounted() {
 		this.chatPreloader();
 		setTimeout(() => this.scrollDownChat(), 70);
 	},
 	methods: {
-		contactClick() {
-			console.log(this.converses);
+		contactClick(value) {
+			// console.log(value);
+			this.current_contact.isChatting = true
+			this.current_contact.name = value.contact_name;
+			this.current_contact.pict = value.contact_pict;
 		},
 		...mapActions(["chat/setChatHistory"]),
 		scrollDownChat() {

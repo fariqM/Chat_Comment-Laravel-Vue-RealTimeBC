@@ -2832,6 +2832,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2841,6 +2853,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      contactSearch: "",
+      current_contact: {
+        isChatting: false,
+        pict: "/assets/images/logo.png",
+        name: "",
+        isActive: true,
+        converse_id: ""
+      },
       form: {
         user_id: 1,
         user_name: "Cak Mad",
@@ -2893,7 +2913,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           speed: 300,
           easing: undefined,
           verticalNativeBarPos: "right",
-          maxHeight: '100%'
+          maxHeight: "100%"
         },
         rail: {
           background: "#662489",
@@ -2934,7 +2954,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           speed: 300,
           easing: undefined,
           verticalNativeBarPos: "right",
-          maxWidth: '100%',
+          maxWidth: "100%",
           maxHeight: 250
         },
         rail: {
@@ -2965,24 +2985,35 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$store.registerModule("chat", _store_chat_ChatStore__WEBPACK_IMPORTED_MODULE_0__.default);
   },
   beforeDestroy: function beforeDestroy() {
-    this.$store.unregisterModule('chat');
+    this.$store.unregisterModule("chat");
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     histories: "chat/getHistory"
   })), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     converses: "chat/getConverse"
-  })),
+  })), {}, {
+    filteredCOntact: function filteredCOntact() {
+      var _this = this;
+
+      return this.converses.filter(function (converse) {
+        return converse.contact_name.toLowerCase().match(_this.contactSearch);
+      });
+    }
+  }),
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     this.chatPreloader();
     setTimeout(function () {
-      return _this.scrollDownChat();
+      return _this2.scrollDownChat();
     }, 70);
   },
   methods: _objectSpread(_objectSpread({
-    contactClick: function contactClick() {
-      console.log(this.converses);
+    contactClick: function contactClick(value) {
+      // console.log(value);
+      this.current_contact.isChatting = true;
+      this.current_contact.name = value.contact_name;
+      this.current_contact.pict = value.contact_pict;
     }
   }, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), {}, {
     scrollDownChat: function scrollDownChat() {
@@ -2991,7 +3022,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, 500, "easeInOutQuart");
     },
     sendMessage: function sendMessage() {
-      var _this2 = this;
+      var _this3 = this;
 
       var s = new Date();
       var messages = {
@@ -3006,7 +3037,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.form.message = "";
       setTimeout(function () {
-        return _this2.scrollDownChat();
+        return _this3.scrollDownChat();
       }, 70);
     },
     chatPreloader: function chatPreloader() {
@@ -3509,27 +3540,27 @@ __webpack_require__.r(__webpack_exports__);
     last_message: "pesan terakhir",
     last_message_time: "3 Oct, 2018"
   }, {
-    converse_id: 1,
+    converse_id: 2,
     contact_id: 3,
     isActive: false,
-    contact_pict: '/assets/images/faces/13.jpg',
+    contact_pict: '/assets/images/faces/1.jpg',
     contact_name: "Cak Zai",
     last_message: "pesan terakhir Cak Zai",
     last_message_time: "3 Oct, 2018"
   }, {
-    converse_id: 1,
+    converse_id: 56,
     contact_id: 2,
-    isActive: true,
-    contact_pict: '/assets/images/faces/13.jpg',
+    isActive: false,
+    contact_pict: '/assets/images/faces/3.jpg',
     contact_name: "Cak Mat",
     last_message: "pesan terakhir",
     last_message_time: "3 Oct, 2018"
   }, {
-    converse_id: 1,
+    converse_id: 23,
     contact_id: 2,
     isActive: true,
-    contact_pict: '/assets/images/faces/13.jpg',
-    contact_name: "Cak Mat",
+    contact_pict: "/assets/images/faces/17.jpg",
+    contact_name: "Cak Jen",
     last_message: "pesan terakhir",
     last_message_time: "3 Oct, 2018"
   }],
@@ -33116,7 +33147,44 @@ var render = function() {
         { staticClass: "chat-sidebar-wrap", attrs: { "data-sidebar": "chat" } },
         [
           _c("div", { staticClass: "border-right" }, [
-            _vm._m(0),
+            _c(
+              "div",
+              {
+                staticClass:
+                  "pt-2 pb-2 pl-3 pr-3 d-flex align-items-center o-hidden box-shadow-1 chat-topbar"
+              },
+              [
+                _vm._m(0),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group m-0 flex-grow-1" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.contactSearch,
+                        expression: "contactSearch"
+                      }
+                    ],
+                    staticClass: "form-control form-control-rounded",
+                    attrs: {
+                      type: "text",
+                      id: "search",
+                      placeholder: "Search contacts"
+                    },
+                    domProps: { value: _vm.contactSearch },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.contactSearch = $event.target.value
+                      }
+                    }
+                  })
+                ])
+              ]
+            ),
             _vm._v(" "),
             _c(
               "div",
@@ -33135,7 +33203,7 @@ var render = function() {
                       [_vm._v("\n\t\t\t\t\t\tRecent\n\t\t\t\t\t")]
                     ),
                     _vm._v(" "),
-                    _vm._l(_vm.converses, function(converse, idx) {
+                    _vm._l(_vm.filteredCOntact, function(converse, idx) {
                       return [
                         _c(
                           "div",
@@ -33144,7 +33212,11 @@ var render = function() {
                             staticClass:
                               "p-3 d-flex align-items-center border-bottom contact",
                             class: { online: converse.isActive },
-                            on: { click: _vm.contactClick }
+                            on: {
+                              click: function($event) {
+                                return _vm.contactClick(converse)
+                              }
+                            }
                           },
                           [
                             _c("img", {
@@ -33225,196 +33297,235 @@ var render = function() {
           attrs: { "data-sidebar-content": "chat" }
         },
         [
-          _c(
-            "div",
-            {
-              staticClass:
-                "d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar"
-            },
-            [
-              _vm._m(1),
-              _vm._v(" "),
-              _c("div", { staticClass: "d-flex align-items-center" }, [
-                _c("img", {
-                  staticClass: "avatar-sm rounded-circle mr-2",
-                  attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
-                }),
+          _vm.current_contact.isChatting
+            ? [
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar"
+                  },
+                  [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "d-flex align-items-center" }, [
+                      _c("img", {
+                        staticClass: "avatar-sm rounded-circle mr-2",
+                        attrs: { alt: "", src: _vm.current_contact.pict }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "p",
+                        { staticClass: "m-0 text-title text-16 flex-grow-1" },
+                        [
+                          _vm._v(
+                            "\n\t\t\t\t\t\t" +
+                              _vm._s(_vm.current_contact.name) +
+                              "\n\t\t\t\t\t"
+                          )
+                        ]
+                      )
+                    ])
+                  ]
+                ),
                 _vm._v(" "),
-                _c("p", { staticClass: "m-0 text-title text-16 flex-grow-1" }, [
-                  _vm._v("Frank Powell")
-                ])
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "chat-content perfect-scrollbar chat-room-container",
-              attrs: { "data-suppress-scroll-x": "true" }
-            },
-            [
-              _c(
-                "myScroll",
-                { ref: "vs", attrs: { ops: _vm.ops } },
-                _vm._l(_vm.histories, function(item, idx) {
-                  return _c(
-                    "div",
-                    { key: idx, staticClass: "costume-container-chat-item" },
-                    [
-                      item.user_id == _vm.current_user_id
-                        ? _c("div", { staticClass: "d-flex mb-4" }, [
-                            _c(
-                              "div",
-                              { staticClass: "message flex-grow-1 chat-buble" },
-                              [
-                                _c("div", { staticClass: "d-flex" }, [
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "chat-content perfect-scrollbar chat-room-container",
+                    attrs: { "data-suppress-scroll-x": "true" }
+                  },
+                  [
+                    _c(
+                      "myScroll",
+                      { ref: "vs", attrs: { ops: _vm.ops } },
+                      _vm._l(_vm.histories, function(item, idx) {
+                        return _c(
+                          "div",
+                          {
+                            key: idx,
+                            staticClass: "costume-container-chat-item"
+                          },
+                          [
+                            item.user_id == _vm.current_user_id
+                              ? _c("div", { staticClass: "d-flex mb-4" }, [
                                   _c(
-                                    "p",
+                                    "div",
                                     {
                                       staticClass:
-                                        "mb-1 text-title text-16 flex-grow-1"
+                                        "message flex-grow-1 chat-buble"
                                     },
                                     [
-                                      _vm._v(
-                                        "\n\t\t\t\t\t\t\t\t\t" +
-                                          _vm._s(item.user_name) +
-                                          "\n\t\t\t\t\t\t\t\t"
-                                      )
+                                      _c("div", { staticClass: "d-flex" }, [
+                                        _c(
+                                          "p",
+                                          {
+                                            staticClass:
+                                              "mb-1 text-title text-16 flex-grow-1"
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n\t\t\t\t\t\t\t\t\t\t" +
+                                                _vm._s(item.user_name) +
+                                                "\n\t\t\t\t\t\t\t\t\t"
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass: "text-small text-muted"
+                                          },
+                                          [
+                                            _vm._v(
+                                              " " + _vm._s(item.time) + " "
+                                            )
+                                          ]
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("p", { staticClass: "m-0" }, [
+                                        _vm._v(
+                                          "\n\t\t\t\t\t\t\t\t\t" +
+                                            _vm._s(item.message) +
+                                            "\n\t\t\t\t\t\t\t\t"
+                                        )
+                                      ])
                                     ]
                                   ),
                                   _vm._v(" "),
+                                  _c("img", {
+                                    staticClass:
+                                      "avatar-sm rounded-circle ml-3",
+                                    attrs: {
+                                      src: "/assets/images/faces/13.jpg",
+                                      alt: ""
+                                    }
+                                  })
+                                ])
+                              : _c("div", { staticClass: "d-flex mb-4 user" }, [
+                                  _c("img", {
+                                    staticClass:
+                                      "avatar-sm rounded-circle mr-3",
+                                    attrs: {
+                                      src: "/assets/images/faces/1.jpg",
+                                      alt: ""
+                                    }
+                                  }),
+                                  _vm._v(" "),
                                   _c(
-                                    "span",
-                                    { staticClass: "text-small text-muted" },
-                                    [_vm._v(" " + _vm._s(item.time) + " ")]
-                                  )
-                                ]),
-                                _vm._v(" "),
-                                _c("p", { staticClass: "m-0" }, [
-                                  _vm._v(
-                                    "\n\t\t\t\t\t\t\t\t" +
-                                      _vm._s(item.message) +
-                                      "\n\t\t\t\t\t\t\t"
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "message flex-grow-1 chat-buble"
+                                    },
+                                    [
+                                      _c("div", { staticClass: "d-flex" }, [
+                                        _c(
+                                          "p",
+                                          {
+                                            staticClass:
+                                              "mb-1 text-title text-16 flex-grow-1"
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n\t\t\t\t\t\t\t\t\t\t" +
+                                                _vm._s(item.user_name) +
+                                                "\n\t\t\t\t\t\t\t\t\t"
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "span",
+                                          {
+                                            staticClass: "text-small text-muted"
+                                          },
+                                          [_vm._v(_vm._s(item.time))]
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("p", { staticClass: "m-0" }, [
+                                        _vm._v(_vm._s(item.message) + ".")
+                                      ])
+                                    ]
                                   )
                                 ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("img", {
-                              staticClass: "avatar-sm rounded-circle ml-3",
-                              attrs: {
-                                src: "/assets/images/faces/13.jpg",
-                                alt: ""
-                              }
-                            })
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "d-flex mb-4 user" }, [
-                        _c("img", {
-                          staticClass: "avatar-sm rounded-circle mr-3",
-                          attrs: { src: "/assets/images/faces/1.jpg", alt: "" }
-                        }),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "message flex-grow-1 chat-buble" },
-                          [
-                            _c("div", { staticClass: "d-flex" }, [
-                              _c(
-                                "p",
-                                {
-                                  staticClass:
-                                    "mb-1 text-title text-16 flex-grow-1"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n\t\t\t\t\t\t\t\t\t" +
-                                      _vm._s(item.user_name) +
-                                      "\n\t\t\t\t\t\t\t\t"
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "span",
-                                { staticClass: "text-small text-muted" },
-                                [_vm._v(_vm._s(item.time))]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("p", { staticClass: "m-0" }, [
-                              _vm._v(_vm._s(item.message) + ".")
-                            ])
                           ]
                         )
-                      ])
+                      }),
+                      0
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "card" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area"
+                    },
+                    [
+                      _c(
+                        "form",
+                        {
+                          staticClass: "inputForm",
+                          on: {
+                            submit: function($event) {
+                              $event.preventDefault()
+                              return _vm.sendMessage($event)
+                            }
+                          }
+                        },
+                        [
+                          _c("div", { staticClass: "form-group" }, [
+                            _c("textarea", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.message,
+                                  expression: "form.message"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              attrs: {
+                                placeholder: "Type your message",
+                                name: "message",
+                                id: "message",
+                                cols: "30",
+                                rows: "3"
+                              },
+                              domProps: { value: _vm.form.message },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.form,
+                                    "message",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _vm._m(2)
+                        ]
+                      )
                     ]
                   )
-                }),
-                0
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "card" }, [
-            _c(
-              "div",
-              {
-                staticClass: "pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area"
-              },
-              [
-                _c(
-                  "form",
-                  {
-                    staticClass: "inputForm",
-                    on: {
-                      submit: function($event) {
-                        $event.preventDefault()
-                        return _vm.sendMessage($event)
-                      }
-                    }
-                  },
-                  [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("textarea", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.message,
-                            expression: "form.message"
-                          }
-                        ],
-                        staticClass: "form-control form-control-rounded",
-                        attrs: {
-                          placeholder: "Type your message",
-                          name: "message",
-                          id: "message",
-                          cols: "30",
-                          rows: "3"
-                        },
-                        domProps: { value: _vm.form.message },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.form, "message", $event.target.value)
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _vm._m(2)
-                  ]
-                )
+                ])
               ]
-            )
-          ])
-        ]
+            : [_c("div", { staticClass: "default-chat" })]
+        ],
+        2
       )
     ]
   )
@@ -33425,32 +33536,12 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c(
-      "div",
+      "a",
       {
-        staticClass:
-          "pt-2 pb-2 pl-3 pr-3 d-flex align-items-center o-hidden box-shadow-1 chat-topbar"
+        staticClass: "link-icon d-md-none",
+        attrs: { "data-sidebar-toggle": "chat" }
       },
-      [
-        _c(
-          "a",
-          {
-            staticClass: "link-icon d-md-none",
-            attrs: { "data-sidebar-toggle": "chat" }
-          },
-          [_c("i", { staticClass: "icon-regular ml-0 mr-3 i-Left" })]
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group m-0 flex-grow-1" }, [
-          _c("input", {
-            staticClass: "form-control form-control-rounded",
-            attrs: {
-              type: "text",
-              id: "search",
-              placeholder: "Search contacts"
-            }
-          })
-        ])
-      ]
+      [_c("i", { staticClass: "icon-regular ml-0 mr-3 i-Left" })]
     )
   },
   function() {

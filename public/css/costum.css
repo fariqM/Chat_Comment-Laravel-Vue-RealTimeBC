@@ -8,6 +8,13 @@
 }
 .costume-container-chat-item{
     padding-right: 10px;
+    padding-left: 5px;
+}
+.default-chat {
+    width: 100%;
+    height: 100%;
+    background-image: url("/assets/images/default_chat.jpg");
+    /* background-color: blueviolet; */
 }
 
 
