@@ -65,19 +65,19 @@ $(document).ready(function() {
   initLayout();
 
   // Show Secondary menu area on hover on side menu item;
-  $sidebarLeft.find(".nav-item").on("mouseenter", function(event) {
-    let $navItem = $(event.currentTarget);
-    let dataItem = $navItem.data("item");
+  // $sidebarLeft.find(".nav-item").on("mouseenter", function(event) {
+  //   let $navItem = $(event.currentTarget);
+  //   let dataItem = $navItem.data("item");
 
-    if (dataItem) {
-      navItemToggleActive($navItem);
-      openSidebarSecondary();
-    } else {
-      closeSidebarSecondary();
-    }
-    $sidebarLeftSecondary.find(".childNav").hide();
-    $sidebarLeftSecondary.find(`[data-parent="${dataItem}"]`).show();
-  });
+  //   if (dataItem) {
+  //     navItemToggleActive($navItem);
+  //     openSidebarSecondary();
+  //   } else {
+  //     closeSidebarSecondary();
+  //   }
+  //   $sidebarLeftSecondary.find(".childNav").hide();
+  //   $sidebarLeftSecondary.find(`[data-parent="${dataItem}"]`).show();
+  // });
 
   // Prevent opeing link if has data-item
   $sidebarLeft.find(".nav-item").on("click", function(e) {

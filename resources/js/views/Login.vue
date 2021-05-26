@@ -8,7 +8,7 @@
 							<div class="auth-logo text-center mb-4">
 								<img :src="'/assets/images/logo.png'" alt="" />
 							</div>
-							<h1 class="mb-3 text-18">Sign In</h1>
+							<h1 class="mb-3 text-18">Sign in</h1>
 							<form @submit.prevent="handleLogin">
 								<div class="form-group">
 									<label for="email">Email address</label>
