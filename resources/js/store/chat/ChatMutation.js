@@ -4,5 +4,8 @@ export default {
     },
     setConverse(state, payload) {
         state.converse.push(payload);
+    },
+    setContacts(state, payload) {
+        state.contacts.push(payload);
     }
 };

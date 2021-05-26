@@ -57,25 +57,22 @@
 						>
 							Contacts
 						</div>
-						<div
-							class="p-3 d-flex border-bottom align-items-center contact online"
-						>
-							<img
-								:src="'/assets/images/faces/13.jpg'"
-								alt=""
-								class="avatar-sm rounded-circle mr-3"
-							/>
-							<h6 class="">Jhone Will</h6>
-						</div>
 
-						<div class="p-3 d-flex border-bottom align-items-center contact">
-							<img
-								:src="'/assets/images/faces/13.jpg'"
-								alt=""
-								class="avatar-sm rounded-circle mr-3"
-							/>
-							<h6 class="">Jhone Will</h6>
-						</div>
+						<template v-for="contact in contacts">
+							<div
+								@click="contactClick(contact)"
+								:key="contact.user_id"
+								:class="{ online: contact.isActive }"
+								class="p-3 d-flex border-bottom align-items-center contact"
+							>
+								<img
+									v-bind:src="contact.contact_pict"
+									alt=""
+									class="avatar-sm rounded-circle mr-3"
+								/>
+								<h6 class="">{{ contact.contact_name }}</h6>
+							</div>
+						</template>
 					</contactscroll>
 				</div>
 			</div>
@@ -199,11 +196,13 @@ export default {
 	},
 	data() {
 		return {
-			contactSearch:"",
+			contactSearch: "",
 			current_contact: {
+				contact_id: 4,
 				isChatting: false,
 				pict: "/assets/images/logo.png",
 				name: "",
+				last_message_time: "",
 				isActive: true,
 				converse_id: "",
 			},
@@ -341,24 +340,28 @@ export default {
 	computed: {
 		...mapGetters({ histories: "chat/getHistory" }),
 		...mapGetters({ converses: "chat/getConverse" }),
-		filteredCOntact: function(){
+		...mapGetters({ contacts: "chat/getContacts" }),
+
+		// Search Contact logic
+		filteredCOntact: function () {
 			return this.converses.filter((converse) => {
-				return converse.contact_name.toLowerCase().match(this.contactSearch)
-			})
-		}
+				return converse.contact_name.toLowerCase().match(this.contactSearch);
+			});
+		},
 	},
 	mounted() {
 		this.chatPreloader();
 		setTimeout(() => this.scrollDownChat(), 70);
 	},
 	methods: {
+		...mapActions(["chat/setChatHistory"]),
+
 		contactClick(value) {
 			// console.log(value);
-			this.current_contact.isChatting = true
+			this.current_contact.isChatting = true;
 			this.current_contact.name = value.contact_name;
 			this.current_contact.pict = value.contact_pict;
 		},
-		...mapActions(["chat/setChatHistory"]),
 		scrollDownChat() {
 			this.$refs["vs"].scrollTo(
 				{
@@ -378,10 +381,16 @@ export default {
 			};
 			messages.time = s.toLocaleTimeString();
 			messages.message = this.form.message;
-			this["chat/setChatHistory"](messages);
-			// this.$store.dispatch("chat/setChatHistory", messages)
-			this.form.message = "";
-			setTimeout(() => this.scrollDownChat(), 70);
+			if (this.form.message === "") {
+				this.$toast.error("please send a text first", "Oops,", {
+					position: "topRight",
+				});
+			} else {
+				this["chat/setChatHistory"](messages);
+				// this.$store.dispatch("chat/setChatHistory", messages)
+				this.form.message = "";
+				setTimeout(() => this.scrollDownChat(), 70);
+			}
 		},
 		chatPreloader() {
 			window.gullUtils = {

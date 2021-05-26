@@ -2841,9 +2841,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
 
 
 
@@ -2855,9 +2852,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return {
       contactSearch: "",
       current_contact: {
+        contact_id: 4,
         isChatting: false,
         pict: "/assets/images/logo.png",
         name: "",
+        last_message_time: "",
         isActive: true,
         converse_id: ""
       },
@@ -2987,11 +2986,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   beforeDestroy: function beforeDestroy() {
     this.$store.unregisterModule("chat");
   },
-  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
+  computed: _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     histories: "chat/getHistory"
   })), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     converses: "chat/getConverse"
+  })), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
+    contacts: "chat/getContacts"
   })), {}, {
+    // Search Contact logic
     filteredCOntact: function filteredCOntact() {
       var _this = this;
 
@@ -3008,14 +3010,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return _this2.scrollDownChat();
     }, 70);
   },
-  methods: _objectSpread(_objectSpread({
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), {}, {
     contactClick: function contactClick(value) {
       // console.log(value);
       this.current_contact.isChatting = true;
       this.current_contact.name = value.contact_name;
       this.current_contact.pict = value.contact_pict;
-    }
-  }, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), {}, {
+    },
     scrollDownChat: function scrollDownChat() {
       this.$refs["vs"].scrollTo({
         y: "110%"
@@ -3033,12 +3034,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
       messages.time = s.toLocaleTimeString();
       messages.message = this.form.message;
-      this["chat/setChatHistory"](messages); // this.$store.dispatch("chat/setChatHistory", messages)
 
-      this.form.message = "";
-      setTimeout(function () {
-        return _this3.scrollDownChat();
-      }, 70);
+      if (this.form.message === "") {
+        this.$toast.error("please send a text first", "Oops,", {
+          position: "topRight"
+        });
+      } else {
+        this["chat/setChatHistory"](messages); // this.$store.dispatch("chat/setChatHistory", messages)
+
+        this.form.message = "";
+        setTimeout(function () {
+          return _this3.scrollDownChat();
+        }, 70);
+      }
     },
     chatPreloader: function chatPreloader() {
       window.gullUtils = {
@@ -3466,6 +3474,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }, _callee2);
     }))();
+  },
+  setContacts: function setContacts(state, payload) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              state.commit("setContacts", payload);
+
+            case 1:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }))();
   }
 });
 
@@ -3491,6 +3515,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   getConverse: function getConverse(state) {
     return state.converse;
+  },
+  getContacts: function getContacts(state) {
+    return state.contacts;
   }
 });
 
@@ -3513,6 +3540,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   setConverse: function setConverse(state, payload) {
     state.converse.push(payload);
+  },
+  setContacts: function setContacts(state, payload) {
+    state.contacts.push(payload);
   }
 });
 
@@ -3535,7 +3565,7 @@ __webpack_require__.r(__webpack_exports__);
     converse_id: 1,
     contact_id: 2,
     isActive: true,
-    contact_pict: '/assets/images/faces/13.jpg',
+    contact_pict: "/assets/images/faces/13.jpg",
     contact_name: "Cak Dul",
     last_message: "pesan terakhir",
     last_message_time: "3 Oct, 2018"
@@ -3543,7 +3573,7 @@ __webpack_require__.r(__webpack_exports__);
     converse_id: 2,
     contact_id: 3,
     isActive: false,
-    contact_pict: '/assets/images/faces/1.jpg',
+    contact_pict: "/assets/images/faces/1.jpg",
     contact_name: "Cak Zai",
     last_message: "pesan terakhir Cak Zai",
     last_message_time: "3 Oct, 2018"
@@ -3551,7 +3581,7 @@ __webpack_require__.r(__webpack_exports__);
     converse_id: 56,
     contact_id: 2,
     isActive: false,
-    contact_pict: '/assets/images/faces/3.jpg',
+    contact_pict: "/assets/images/faces/3.jpg",
     contact_name: "Cak Mat",
     last_message: "pesan terakhir",
     last_message_time: "3 Oct, 2018"
@@ -3563,6 +3593,13 @@ __webpack_require__.r(__webpack_exports__);
     contact_name: "Cak Jen",
     last_message: "pesan terakhir",
     last_message_time: "3 Oct, 2018"
+  }],
+  contacts: [{
+    user_id: 34,
+    isActive: false,
+    contact_pict: "/assets/images/faces/13.jpg",
+    contact_name: "Cak Di",
+    email: "asdasdas"
   }],
   ngetest: "testing chat state"
 });
@@ -33249,37 +33286,32 @@ var render = function() {
                       [_vm._v("\n\t\t\t\t\t\tContacts\n\t\t\t\t\t")]
                     ),
                     _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "p-3 d-flex border-bottom align-items-center contact online"
-                      },
-                      [
-                        _c("img", {
-                          staticClass: "avatar-sm rounded-circle mr-3",
-                          attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
-                        }),
-                        _vm._v(" "),
-                        _c("h6", {}, [_vm._v("Jhone Will")])
+                    _vm._l(_vm.contacts, function(contact) {
+                      return [
+                        _c(
+                          "div",
+                          {
+                            key: contact.user_id,
+                            staticClass:
+                              "p-3 d-flex border-bottom align-items-center contact",
+                            class: { online: contact.isActive },
+                            on: {
+                              click: function($event) {
+                                return _vm.contactClick(contact)
+                              }
+                            }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "avatar-sm rounded-circle mr-3",
+                              attrs: { src: contact.contact_pict, alt: "" }
+                            }),
+                            _vm._v(" "),
+                            _c("h6", {}, [_vm._v(_vm._s(contact.contact_name))])
+                          ]
+                        )
                       ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "p-3 d-flex border-bottom align-items-center contact"
-                      },
-                      [
-                        _c("img", {
-                          staticClass: "avatar-sm rounded-circle mr-3",
-                          attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
-                        }),
-                        _vm._v(" "),
-                        _c("h6", {}, [_vm._v("Jhone Will")])
-                      ]
-                    )
+                    })
                   ],
                   2
                 )

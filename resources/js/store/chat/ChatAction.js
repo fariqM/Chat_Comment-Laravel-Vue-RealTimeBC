@@ -4,5 +4,8 @@ export default {
     },
     async setConverse(state, payload){
         state.commit("setConverse", payload);
+    },
+    async setContacts(state, payload) {
+        state.commit("setContacts", payload);
     }
 };
