@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div
-			class="sidebar-left open rtl-ps-none"
+			class="sidebar-left rtl-ps-none"
 			data-perfect-scrollbar
 			data-suppress-scroll-x="true"
 		>

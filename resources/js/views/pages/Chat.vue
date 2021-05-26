@@ -19,59 +19,63 @@
 				</div>
 
 				<div class="contacts-scrollable perfect-scrollbar">
-					<div
-						class="mt-4 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
-					>
-						Recent
-					</div>
-
-					<div
-						class="p-3 d-flex align-items-center border-bottom online contact"
-					>
-						<img
-							:src="'/assets/images/faces/13.jpg'"
-							class="avatar-sm rounded-circle mr-3"
-							alt=""
-						/>
-						<div>
-							<h6 class="m-0">William Wills</h6>
-							<span class="text-muted text-small">3 Oct, 2018</span>
+					<contactscroll :ops="ContactScroll_ops" ref="vs">
+						<!-- Recent Chatting -->
+						<div
+							class="mt-4 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
+						>
+							Recent
 						</div>
-					</div>
 
-					<div
-						class="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
-					>
-						Contacts
-					</div>
-					<div
-						class="p-3 d-flex border-bottom align-items-center contact online"
-					>
-						<img
-							:src="'/assets/images/faces/13.jpg'"
-							alt=""
-							class="avatar-sm rounded-circle mr-3"
-						/>
-						<h6 class="">Jhone Will</h6>
-					</div>
-					<div
-						class="p-3 d-flex border-bottom align-items-center contact online"
-					>
-						<img
-							:src="'/assets/images/faces/13.jpg'"
-							alt=""
-							class="avatar-sm rounded-circle mr-3"
-						/>
-						<h6 class="">Jhone Will</h6>
-					</div>
-					<div class="p-3 d-flex border-bottom align-items-center contact">
-						<img
-							:src="'/assets/images/faces/13.jpg'"
-							alt=""
-							class="avatar-sm rounded-circle mr-3"
-						/>
-						<h6 class="">Jhone Will</h6>
-					</div>
+						<template v-for="(converse, idx) in converses">
+							<div
+								:key="idx"
+								@click="contactClick"
+								:class="{ online: converse.isActive }"
+								class="p-3 d-flex align-items-center border-bottom contact"
+							>
+								<img
+									:src="converse.contact_pict"
+									class="avatar-sm rounded-circle mr-3"
+									alt=""
+								/>
+								<div>
+									<h6 class="m-0">{{ converse.contact_name }}</h6>
+									<span class="text-muted text-small">{{
+										converse.last_message_time
+									}}</span>
+								</div>
+							</div>
+						</template>
+
+						<!-- End Recent Chatting -->
+
+						<!-- Contact List -->
+						<div
+							class="mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
+						>
+							Contacts
+						</div>
+						<div
+							class="p-3 d-flex border-bottom align-items-center contact online"
+						>
+							<img
+								:src="'/assets/images/faces/13.jpg'"
+								alt=""
+								class="avatar-sm rounded-circle mr-3"
+							/>
+							<h6 class="">Jhone Will</h6>
+						</div>
+
+						<div class="p-3 d-flex border-bottom align-items-center contact">
+							<img
+								:src="'/assets/images/faces/13.jpg'"
+								alt=""
+								class="avatar-sm rounded-circle mr-3"
+							/>
+							<h6 class="">Jhone Will</h6>
+						</div>
+					</contactscroll>
 				</div>
 			</div>
 		</div>
@@ -93,7 +97,7 @@
 			<div class="chat-content perfect-scrollbar" data-suppress-scroll-x="true">
 				<myScroll :ops="ops" ref="vs">
 					<div
-						v-for="(item, idx) in history"
+						v-for="(item, idx) in histories"
 						:key="idx"
 						class="costume-container-chat-item"
 					>
@@ -174,8 +178,12 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import ChatApp from "../../store/chat/ChatStore";
+import contactscroll from 'vuescroll';
 
 export default {
+	components: {
+      contactscroll
+    },
 	data() {
 		return {
 			form: {
@@ -220,6 +228,46 @@ export default {
 					],
 				},
 			],
+			ContactScroll_ops: {
+				vuescroll: {
+					mode: "native",
+					sizeStrategy: "percent",
+					detectResize: false,
+					/** Enable locking to the main axis if user moves only slightly on one of them at start */
+					locking: false,
+				},
+				scrollPanel: {
+					initialScrollY: false,
+					initialScrollX: false,
+					scrollingX: true,
+					scrollingY: true,
+					speed: 300,
+					easing: undefined,
+					verticalNativeBarPos: "right",
+					maxHeight: '100%',
+				},
+				rail: {
+					background: "#662489",
+					opacity: 0,
+					size: "6px",
+					specifyBorderRadius: false,
+					gutterOfEnds: null,
+					gutterOfSide: "2px",
+					keepShow: false,
+				},
+				bar: {
+					showDelay: 500,
+					onlyShowBarOnScroll: false,
+					keepShow: false,
+					background: "#662489",
+					opacity: 1,
+					hoverStyle: false,
+					specifyBorderRadius: false,
+					minSize: 0,
+					size: "6px",
+					disable: false,
+				},
+			},
 			ops: {
 				vuescroll: {
 					mode: "native",
@@ -265,19 +313,22 @@ export default {
 	created() {
 		this.$store.registerModule("chat", ChatApp);
 	},
+	beforeDestroy(){
+		this.$store.unregisterModule('chat')
+	},
 	computed: {
-		...mapGetters({ histories: "chat/getHistory" })
+		...mapGetters({ histories: "chat/getHistory" }),
+		...mapGetters({ converses: "chat/getConverse" }),
 	},
 	mounted() {
 		this.chatPreloader();
 		setTimeout(() => this.scrollDownChat(), 70);
-		this.getHistories();
 	},
 	methods: {
-		...mapActions(["chat/setChatHistory"]),
-		getHistories() {
-			this.history = this.$store.getters["chat/getHistory"];
+		contactClick() {
+			console.log(this.converses);
 		},
+		...mapActions(["chat/setChatHistory"]),
 		scrollDownChat() {
 			this.$refs["vs"].scrollTo(
 				{

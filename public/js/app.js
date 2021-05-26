@@ -2644,8 +2644,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _store_chat_ChatStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../store/chat/ChatStore */ "./resources/js/store/chat/ChatStore.js");
+/* harmony import */ var vuescroll__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuescroll */ "./node_modules/vuescroll/dist/vuescroll.js");
+/* harmony import */ var vuescroll__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuescroll__WEBPACK_IMPORTED_MODULE_1__);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2825,9 +2827,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    contactscroll: (vuescroll__WEBPACK_IMPORTED_MODULE_1___default())
+  },
   data: function data() {
     return {
       form: {
@@ -2865,6 +2875,47 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           time: "22 minutes ago"
         }]
       }],
+      ContactScroll_ops: {
+        vuescroll: {
+          mode: "native",
+          sizeStrategy: "percent",
+          detectResize: false,
+
+          /** Enable locking to the main axis if user moves only slightly on one of them at start */
+          locking: false
+        },
+        scrollPanel: {
+          initialScrollY: false,
+          initialScrollX: false,
+          scrollingX: true,
+          scrollingY: true,
+          speed: 300,
+          easing: undefined,
+          verticalNativeBarPos: "right",
+          maxHeight: '100%'
+        },
+        rail: {
+          background: "#662489",
+          opacity: 0,
+          size: "6px",
+          specifyBorderRadius: false,
+          gutterOfEnds: null,
+          gutterOfSide: "2px",
+          keepShow: false
+        },
+        bar: {
+          showDelay: 500,
+          onlyShowBarOnScroll: false,
+          keepShow: false,
+          background: "#662489",
+          opacity: 1,
+          hoverStyle: false,
+          specifyBorderRadius: false,
+          minSize: 0,
+          size: "6px",
+          disable: false
+        }
+      },
       ops: {
         vuescroll: {
           mode: "native",
@@ -2911,8 +2962,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.$store.registerModule("chat", _store_chat_ChatStore__WEBPACK_IMPORTED_MODULE_0__.default);
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)({
+  beforeDestroy: function beforeDestroy() {
+    this.$store.unregisterModule('chat');
+  },
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     histories: "chat/getHistory"
+  })), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
+    converses: "chat/getConverse"
   })),
   mounted: function mounted() {
     var _this = this;
@@ -2921,12 +2977,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     setTimeout(function () {
       return _this.scrollDownChat();
     }, 70);
-    this.getHistories();
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["chat/setChatHistory"])), {}, {
-    getHistories: function getHistories() {
-      this.history = this.$store.getters["chat/getHistory"];
-    },
+  methods: _objectSpread(_objectSpread({
+    contactClick: function contactClick() {
+      console.log(this.converses);
+    }
+  }, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), {}, {
     scrollDownChat: function scrollDownChat() {
       this.$refs["vs"].scrollTo({
         y: "110%"
@@ -3442,7 +3498,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   history: [],
-  converse: [],
+  converse: [{
+    converse_id: 1,
+    contact_id: 2,
+    isActive: true,
+    contact_pict: '/assets/images/faces/13.jpg',
+    contact_name: "Cak Dul",
+    last_message: "pesan terakhir",
+    last_message_time: "3 Oct, 2018"
+  }, {
+    converse_id: 1,
+    contact_id: 3,
+    isActive: false,
+    contact_pict: '/assets/images/faces/13.jpg',
+    contact_name: "Cak Zai",
+    last_message: "pesan terakhir Cak Zai",
+    last_message_time: "3 Oct, 2018"
+  }, {
+    converse_id: 1,
+    contact_id: 2,
+    isActive: true,
+    contact_pict: '/assets/images/faces/13.jpg',
+    contact_name: "Cak Mat",
+    last_message: "pesan terakhir",
+    last_message_time: "3 Oct, 2018"
+  }, {
+    converse_id: 1,
+    contact_id: 2,
+    isActive: true,
+    contact_pict: '/assets/images/faces/13.jpg',
+    contact_name: "Cak Mat",
+    last_message: "pesan terakhir",
+    last_message_time: "3 Oct, 2018"
+  }],
   ngetest: "testing chat state"
 });
 
@@ -32929,7 +33017,7 @@ var render = function() {
     _c(
       "div",
       {
-        staticClass: "sidebar-left open rtl-ps-none",
+        staticClass: "sidebar-left rtl-ps-none",
         attrs: {
           "data-perfect-scrollbar": "",
           "data-suppress-scroll-x": "true"
@@ -33033,87 +33121,96 @@ var render = function() {
               { staticClass: "contacts-scrollable perfect-scrollbar" },
               [
                 _c(
-                  "div",
-                  {
-                    staticClass:
-                      "mt-4 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
-                  },
-                  [_vm._v("\n\t\t\t\t\tRecent\n\t\t\t\t")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "p-3 d-flex align-items-center border-bottom online contact"
-                  },
+                  "contactscroll",
+                  { ref: "vs", attrs: { ops: _vm.ContactScroll_ops } },
                   [
-                    _c("img", {
-                      staticClass: "avatar-sm rounded-circle mr-3",
-                      attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "mt-4 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
+                      },
+                      [_vm._v("\n\t\t\t\t\t\tRecent\n\t\t\t\t\t")]
+                    ),
+                    _vm._v(" "),
+                    _vm._l(_vm.converses, function(converse, idx) {
+                      return [
+                        _c(
+                          "div",
+                          {
+                            key: idx,
+                            staticClass:
+                              "p-3 d-flex align-items-center border-bottom contact",
+                            class: { online: converse.isActive },
+                            on: { click: _vm.contactClick }
+                          },
+                          [
+                            _c("img", {
+                              staticClass: "avatar-sm rounded-circle mr-3",
+                              attrs: { src: converse.contact_pict, alt: "" }
+                            }),
+                            _vm._v(" "),
+                            _c("div", [
+                              _c("h6", { staticClass: "m-0" }, [
+                                _vm._v(_vm._s(converse.contact_name))
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "span",
+                                { staticClass: "text-muted text-small" },
+                                [_vm._v(_vm._s(converse.last_message_time))]
+                              )
+                            ])
+                          ]
+                        )
+                      ]
                     }),
                     _vm._v(" "),
-                    _vm._m(1)
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
-                  },
-                  [_vm._v("\n\t\t\t\t\tContacts\n\t\t\t\t")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "p-3 d-flex border-bottom align-items-center contact online"
-                  },
-                  [
-                    _c("img", {
-                      staticClass: "avatar-sm rounded-circle mr-3",
-                      attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
-                    }),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "mt-3 pb-2 pl-3 pr-3 font-weight-bold text-muted border-bottom"
+                      },
+                      [_vm._v("\n\t\t\t\t\t\tContacts\n\t\t\t\t\t")]
+                    ),
                     _vm._v(" "),
-                    _c("h6", {}, [_vm._v("Jhone Will")])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "p-3 d-flex border-bottom align-items-center contact online"
-                  },
-                  [
-                    _c("img", {
-                      staticClass: "avatar-sm rounded-circle mr-3",
-                      attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
-                    }),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "p-3 d-flex border-bottom align-items-center contact online"
+                      },
+                      [
+                        _c("img", {
+                          staticClass: "avatar-sm rounded-circle mr-3",
+                          attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
+                        }),
+                        _vm._v(" "),
+                        _c("h6", {}, [_vm._v("Jhone Will")])
+                      ]
+                    ),
                     _vm._v(" "),
-                    _c("h6", {}, [_vm._v("Jhone Will")])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "p-3 d-flex border-bottom align-items-center contact"
-                  },
-                  [
-                    _c("img", {
-                      staticClass: "avatar-sm rounded-circle mr-3",
-                      attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
-                    }),
-                    _vm._v(" "),
-                    _c("h6", {}, [_vm._v("Jhone Will")])
-                  ]
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "p-3 d-flex border-bottom align-items-center contact"
+                      },
+                      [
+                        _c("img", {
+                          staticClass: "avatar-sm rounded-circle mr-3",
+                          attrs: { src: "/assets/images/faces/13.jpg", alt: "" }
+                        }),
+                        _vm._v(" "),
+                        _c("h6", {}, [_vm._v("Jhone Will")])
+                      ]
+                    )
+                  ],
+                  2
                 )
-              ]
+              ],
+              1
             )
           ])
         ]
@@ -33133,7 +33230,7 @@ var render = function() {
                 "d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar"
             },
             [
-              _vm._m(2),
+              _vm._m(1),
               _vm._v(" "),
               _c("div", { staticClass: "d-flex align-items-center" }, [
                 _c("img", {
@@ -33158,7 +33255,7 @@ var render = function() {
               _c(
                 "myScroll",
                 { ref: "vs", attrs: { ops: _vm.ops } },
-                _vm._l(_vm.history, function(item, idx) {
+                _vm._l(_vm.histories, function(item, idx) {
                   return _c(
                     "div",
                     { key: idx, staticClass: "costume-container-chat-item" },
@@ -33302,7 +33399,7 @@ var render = function() {
                       })
                     ]),
                     _vm._v(" "),
-                    _vm._m(3)
+                    _vm._m(2)
                   ]
                 )
               ]
@@ -33346,18 +33443,6 @@ var staticRenderFns = [
         ])
       ]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("h6", { staticClass: "m-0" }, [_vm._v("William Wills")]),
-      _vm._v(" "),
-      _c("span", { staticClass: "text-muted text-small" }, [
-        _vm._v("3 Oct, 2018")
-      ])
-    ])
   },
   function() {
     var _vm = this
