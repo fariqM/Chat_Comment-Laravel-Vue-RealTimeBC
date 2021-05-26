@@ -108,7 +108,7 @@
 							class="costume-container-chat-item"
 						>
 							<!-- Your Chat -->
-							<div v-if="item.user_id == current_user_id" class="d-flex mb-4">
+							<div v-if="item.contact_id != current_user_id" class="d-flex mb-4">
 								<div class="message flex-grow-1 chat-buble">
 									<div class="d-flex">
 										<p class="mb-1 text-title text-16 flex-grow-1">
@@ -196,6 +196,13 @@ export default {
 	},
 	data() {
 		return {
+			messages : {
+				contact_id: 1,
+				sender:0,
+				contact_name: "Cak Mad",
+				message: "",
+				time: "",
+			},
 			contactSearch: "",
 			current_contact: {
 				contact_id: 4,
@@ -213,7 +220,7 @@ export default {
 				time: "",
 			},
 			history: [],
-			current_user_id: 1,
+			current_user_id: 2,
 			items: [
 				{
 					log_id: 1,
@@ -355,12 +362,29 @@ export default {
 	},
 	methods: {
 		...mapActions(["chat/setChatHistory"]),
+		...mapActions(["chat/setDumpHistory"]),
+		getHistories(){
+			// get histories from API when clicking the contact
+		},
 
 		contactClick(value) {
 			// console.log(value);
+			this.form.message === "";
 			this.current_contact.isChatting = true;
 			this.current_contact.name = value.contact_name;
 			this.current_contact.pict = value.contact_pict;
+			// this.current_contact.converse_id = API 
+
+			this.messages.contact_id = value.contact_id
+			this.messages.message = "";
+			this.messages.contact_name = value.contact_name
+
+			// let dumpMessage = [];
+			this["chat/setDumpHistory"]();
+			// this.histories = API
+			// this.histories = [];
+			
+
 		},
 		scrollDownChat() {
 			this.$refs["vs"].scrollTo(
@@ -373,23 +397,20 @@ export default {
 		},
 		sendMessage() {
 			let s = new Date();
-			const messages = {
-				user_id: 1,
-				user_name: "Cak Mad",
-				message: "",
-				time: "",
-			};
-			messages.time = s.toLocaleTimeString();
-			messages.message = this.form.message;
+			
+			this.messages.time = s.toLocaleTimeString();
+			this.messages.sender = this.current_user_id
+			this.messages.message = this.form.message;
 			if (this.form.message === "") {
 				this.$toast.error("please send a text first", "Oops,", {
 					position: "topRight",
 				});
 			} else {
-				this["chat/setChatHistory"](messages);
+				this["chat/setChatHistory"](this.messages);
 				// this.$store.dispatch("chat/setChatHistory", messages)
 				this.form.message = "";
 				setTimeout(() => this.scrollDownChat(), 70);
+				console.log(this.messages);
 			}
 		},
 		chatPreloader() {
@@ -479,6 +500,7 @@ export default {
 				});
 			});
 		},
+
 	},
 };
 </script>

@@ -7,5 +7,8 @@ export default {
     },
     setContacts(state, payload) {
         state.contacts.push(payload);
+    },
+    setDumpHistory(state){
+        state.history = []
     }
 };

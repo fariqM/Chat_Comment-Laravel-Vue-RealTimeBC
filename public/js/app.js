@@ -2850,6 +2850,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
+      messages: {
+        contact_id: 1,
+        sender: 0,
+        contact_name: "Cak Mad",
+        message: "",
+        time: ""
+      },
       contactSearch: "",
       current_contact: {
         contact_id: 4,
@@ -2867,7 +2874,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         time: ""
       },
       history: [],
-      current_user_id: 1,
+      current_user_id: 2,
       items: [{
         log_id: 1,
         username: "Cak Dul",
@@ -3010,12 +3017,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return _this2.scrollDownChat();
     }, 70);
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setDumpHistory"])), {}, {
+    getHistories: function getHistories() {// get histories from API when clicking the contact
+    },
     contactClick: function contactClick(value) {
       // console.log(value);
+      this.form.message === "";
       this.current_contact.isChatting = true;
       this.current_contact.name = value.contact_name;
-      this.current_contact.pict = value.contact_pict;
+      this.current_contact.pict = value.contact_pict; // this.current_contact.converse_id = API 
+
+      this.messages.contact_id = value.contact_id;
+      this.messages.message = "";
+      this.messages.contact_name = value.contact_name; // let dumpMessage = [];
+
+      this["chat/setDumpHistory"](); // this.histories = API
+      // this.histories = [];
     },
     scrollDownChat: function scrollDownChat() {
       this.$refs["vs"].scrollTo({
@@ -3026,26 +3043,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this3 = this;
 
       var s = new Date();
-      var messages = {
-        user_id: 1,
-        user_name: "Cak Mad",
-        message: "",
-        time: ""
-      };
-      messages.time = s.toLocaleTimeString();
-      messages.message = this.form.message;
+      this.messages.time = s.toLocaleTimeString();
+      this.messages.sender = this.current_user_id;
+      this.messages.message = this.form.message;
 
       if (this.form.message === "") {
         this.$toast.error("please send a text first", "Oops,", {
           position: "topRight"
         });
       } else {
-        this["chat/setChatHistory"](messages); // this.$store.dispatch("chat/setChatHistory", messages)
+        this["chat/setChatHistory"](this.messages); // this.$store.dispatch("chat/setChatHistory", messages)
 
         this.form.message = "";
         setTimeout(function () {
           return _this3.scrollDownChat();
         }, 70);
+        console.log(this.messages);
       }
     },
     chatPreloader: function chatPreloader() {
@@ -3490,6 +3503,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }, _callee3);
     }))();
+  },
+  setDumpHistory: function setDumpHistory(state) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              state.commit("setDumpHistory");
+
+            case 1:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4);
+    }))();
   }
 });
 
@@ -3543,6 +3572,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   setContacts: function setContacts(state, payload) {
     state.contacts.push(payload);
+  },
+  setDumpHistory: function setDumpHistory(state) {
+    state.history = [];
   }
 });
 
@@ -33380,7 +33412,7 @@ var render = function() {
                             staticClass: "costume-container-chat-item"
                           },
                           [
-                            item.user_id == _vm.current_user_id
+                            item.contact_id != _vm.current_user_id
                               ? _c("div", { staticClass: "d-flex mb-4" }, [
                                   _c(
                                     "div",
