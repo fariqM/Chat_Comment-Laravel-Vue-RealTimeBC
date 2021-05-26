@@ -94,7 +94,8 @@
 				</div>
 			</div>
 
-			<div class="chat-content perfect-scrollbar" data-suppress-scroll-x="true">
+			<div class="chat-content perfect-scrollbar chat-room-container" data-suppress-scroll-x="true">
+				
 				<myScroll :ops="ops" ref="vs">
 					<div
 						v-for="(item, idx) in histories"
@@ -103,7 +104,7 @@
 					>
 						<!-- Your Chat -->
 						<div v-if="item.user_id == current_user_id" class="d-flex mb-4">
-							<div class="message flex-grow-1">
+							<div class="message flex-grow-1 chat-buble">
 								<div class="d-flex">
 									<p class="mb-1 text-title text-16 flex-grow-1">
 										{{ item.user_name }}
@@ -122,13 +123,13 @@
 						</div>
 
 						<!-- Someone else Chat -->
-						<div v-else class="d-flex mb-4 user">
+						<div class="d-flex mb-4 user">
 							<img
 								:src="'/assets/images/faces/1.jpg'"
 								alt=""
 								class="avatar-sm rounded-circle mr-3"
 							/>
-							<div class="message flex-grow-1">
+							<div class="message flex-grow-1 chat-buble">
 								<div class="d-flex">
 									<p class="mb-1 text-title text-16 flex-grow-1">
 										{{ item.user_name }}
@@ -279,11 +280,12 @@ export default {
 				scrollPanel: {
 					initialScrollY: false,
 					initialScrollX: false,
-					scrollingX: true,
+					scrollingX: false,
 					scrollingY: true,
 					speed: 300,
 					easing: undefined,
 					verticalNativeBarPos: "right",
+					maxWidth:'100%',
 					maxHeight: 250,
 				},
 				rail: {

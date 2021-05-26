@@ -2831,6 +2831,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -2928,11 +2929,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         scrollPanel: {
           initialScrollY: false,
           initialScrollX: false,
-          scrollingX: true,
+          scrollingX: false,
           scrollingY: true,
           speed: 300,
           easing: undefined,
           verticalNativeBarPos: "right",
+          maxWidth: '100%',
           maxHeight: 250
         },
         rail: {
@@ -33248,7 +33250,7 @@ var render = function() {
           _c(
             "div",
             {
-              staticClass: "chat-content perfect-scrollbar",
+              staticClass: "chat-content perfect-scrollbar chat-room-container",
               attrs: { "data-suppress-scroll-x": "true" }
             },
             [
@@ -33262,38 +33264,42 @@ var render = function() {
                     [
                       item.user_id == _vm.current_user_id
                         ? _c("div", { staticClass: "d-flex mb-4" }, [
-                            _c("div", { staticClass: "message flex-grow-1" }, [
-                              _c("div", { staticClass: "d-flex" }, [
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "mb-1 text-title text-16 flex-grow-1"
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n\t\t\t\t\t\t\t\t\t" +
-                                        _vm._s(item.user_name) +
-                                        "\n\t\t\t\t\t\t\t\t"
-                                    )
-                                  ]
-                                ),
+                            _c(
+                              "div",
+                              { staticClass: "message flex-grow-1 chat-buble" },
+                              [
+                                _c("div", { staticClass: "d-flex" }, [
+                                  _c(
+                                    "p",
+                                    {
+                                      staticClass:
+                                        "mb-1 text-title text-16 flex-grow-1"
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n\t\t\t\t\t\t\t\t\t" +
+                                          _vm._s(item.user_name) +
+                                          "\n\t\t\t\t\t\t\t\t"
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "span",
+                                    { staticClass: "text-small text-muted" },
+                                    [_vm._v(" " + _vm._s(item.time) + " ")]
+                                  )
+                                ]),
                                 _vm._v(" "),
-                                _c(
-                                  "span",
-                                  { staticClass: "text-small text-muted" },
-                                  [_vm._v(" " + _vm._s(item.time) + " ")]
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("p", { staticClass: "m-0" }, [
-                                _vm._v(
-                                  "\n\t\t\t\t\t\t\t\t" +
-                                    _vm._s(item.message) +
-                                    "\n\t\t\t\t\t\t\t"
-                                )
-                              ])
-                            ]),
+                                _c("p", { staticClass: "m-0" }, [
+                                  _vm._v(
+                                    "\n\t\t\t\t\t\t\t\t" +
+                                      _vm._s(item.message) +
+                                      "\n\t\t\t\t\t\t\t"
+                                  )
+                                ])
+                              ]
+                            ),
                             _vm._v(" "),
                             _c("img", {
                               staticClass: "avatar-sm rounded-circle ml-3",
@@ -33303,44 +33309,47 @@ var render = function() {
                               }
                             })
                           ])
-                        : _c("div", { staticClass: "d-flex mb-4 user" }, [
-                            _c("img", {
-                              staticClass: "avatar-sm rounded-circle mr-3",
-                              attrs: {
-                                src: "/assets/images/faces/1.jpg",
-                                alt: ""
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "message flex-grow-1" }, [
-                              _c("div", { staticClass: "d-flex" }, [
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "mb-1 text-title text-16 flex-grow-1"
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n\t\t\t\t\t\t\t\t\t" +
-                                        _vm._s(item.user_name) +
-                                        "\n\t\t\t\t\t\t\t\t"
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "span",
-                                  { staticClass: "text-small text-muted" },
-                                  [_vm._v(_vm._s(item.time))]
-                                )
-                              ]),
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "d-flex mb-4 user" }, [
+                        _c("img", {
+                          staticClass: "avatar-sm rounded-circle mr-3",
+                          attrs: { src: "/assets/images/faces/1.jpg", alt: "" }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "message flex-grow-1 chat-buble" },
+                          [
+                            _c("div", { staticClass: "d-flex" }, [
+                              _c(
+                                "p",
+                                {
+                                  staticClass:
+                                    "mb-1 text-title text-16 flex-grow-1"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n\t\t\t\t\t\t\t\t\t" +
+                                      _vm._s(item.user_name) +
+                                      "\n\t\t\t\t\t\t\t\t"
+                                  )
+                                ]
+                              ),
                               _vm._v(" "),
-                              _c("p", { staticClass: "m-0" }, [
-                                _vm._v(_vm._s(item.message) + ".")
-                              ])
+                              _c(
+                                "span",
+                                { staticClass: "text-small text-muted" },
+                                [_vm._v(_vm._s(item.time))]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("p", { staticClass: "m-0" }, [
+                              _vm._v(_vm._s(item.message) + ".")
                             ])
-                          ])
+                          ]
+                        )
+                      ])
                     ]
                   )
                 }),
