@@ -2639,6 +2639,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -2682,7 +2683,6 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//
 //
 //
 //
@@ -2970,6 +2970,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -2979,58 +2981,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      messages: {
-        contact_id: 1,
-        sender: 0,
-        contact_name: "Cak Mad",
+      leftSidebarChat: 0,
+      isClickingCOntact: false,
+      chat: {
+        contact_id: 0,
+        sender_id: 0,
+        user_id: 0,
         message: "",
+        file_location: "",
+        deleted: false,
         time: ""
+      },
+      form: {
+        message: "",
+        file_location: "",
+        deleted: false
       },
       contactSearch: "",
       current_contact: {
-        contact_id: 4,
+        contact_id: 0,
+        user_id: 0,
         isChatting: false,
-        pict: "/assets/images/logo.png",
+        pict: "",
         name: "",
         last_message_time: "",
         isActive: true,
         converse_id: ""
       },
-      form: {
-        user_id: 1,
-        user_name: "Cak Mad",
-        message: "",
-        time: ""
-      },
-      history: [],
-      current_user_id: 2,
-      items: [{
-        log_id: 1,
-        username: "Cak Dul",
-        last_message: "Apek bozz",
-        last_message_time: "22 minutes ago",
-        history: [{
-          user_id: 1,
-          user_name: "Cak Mad",
-          message: "sembarang wes asdasdasdjkasjdkajskdjkj",
-          time: "28 minutes ago"
-        }, {
-          user_id: 2,
-          user_name: "Cak Dul",
-          message: "asdasdasdasd",
-          time: "26 minutes ago"
-        }, {
-          user_id: 1,
-          user_name: "Cak Mad",
-          message: "hallo cak piye kabare",
-          time: "24 minutes ago"
-        }, {
-          user_id: 2,
-          user_name: "Cak Dul",
-          message: "Apek bozz",
-          time: "22 minutes ago"
-        }]
-      }],
+      current_user_id: 1,
       ContactScroll_ops: {
         vuescroll: {
           mode: "native",
@@ -3122,10 +3100,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   beforeDestroy: function beforeDestroy() {
     this.$store.unregisterModule("chat");
   },
-  computed: _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     histories: "chat/getHistory"
-  })), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
-    converses: "chat/getConverse"
   })), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)({
     contacts: "chat/getContacts"
   })), {}, {
@@ -3134,8 +3110,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this = this;
 
       // should be
-      return this.converses.filter(function (converse) {
-        return converse.contact_name.toLowerCase().match(_this.contactSearch);
+      return this.contacts.filter(function (contact) {
+        return contact.contact_name.toLowerCase().match(_this.contactSearch);
       });
     }
   }),
@@ -3147,22 +3123,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return _this2.scrollDownChat();
     }, 70);
   },
-  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setDumpHistory"])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread({
+    changeleftSidebarChat: function changeleftSidebarChat() {
+      this.leftSidebarChat == -260 ? this.leftSidebarChat = 0 : this.leftSidebarChat = -260;
+      console.log(this.leftSidebarChat);
+    }
+  }, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setChatHistory"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["chat/setDumpHistory"])), {}, {
     getHistories: function getHistories() {// get histories from API when clicking the contact
     },
     contactClick: function contactClick(value) {
-      // console.log(value);
-      this.form.message === "";
-      this.current_contact.isChatting = true;
+      this.isClickingCOntact = true;
       this.current_contact.name = value.contact_name;
-      this.current_contact.pict = value.contact_pict; // this.current_contact.converse_id = API
-
-      this.messages.contact_id = value.contact_id;
-      this.messages.message = "";
-      this.messages.contact_name = value.contact_name; // let dumpMessage = [];
-
-      this["chat/setDumpHistory"](); // this.histories = API
-      // this.histories = [];
+      this.current_contact.pict = value.contact_pict;
+      this.current_contact.user_id = value.user_id;
+      this.current_contact.contact_id = value.contact_id;
     },
     scrollDownChat: function scrollDownChat() {
       this.$refs["vs"].scrollTo({
@@ -3173,22 +3147,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this3 = this;
 
       var s = new Date();
-      this.messages.time = s.toLocaleTimeString();
-      this.messages.sender = this.current_user_id;
-      this.messages.message = this.form.message;
+      this.chat.time = s.toLocaleTimeString();
+      this.chat.message = this.form.message;
+      this.chat.sender_id = this.current_user_id;
+      this.chat.user_id = this.current_contact.user_id;
+      this.chat.contact_id = this.current_contact.contact_id;
 
-      if (this.form.message === "") {
+      if (this.chat.message === "") {
         this.$toast.error("please send a text first", "Oops,", {
           position: "topRight"
         });
       } else {
-        this["chat/setChatHistory"](this.messages); // this.$store.dispatch("chat/setChatHistory", messages)
-
+        this["chat/setChatHistory"](this.chat);
         this.form.message = "";
+        this.form.file_location = "";
         setTimeout(function () {
           return _this3.scrollDownChat();
         }, 70);
-        console.log(this.messages);
+        console.log(this.chat);
       }
     },
     chatPreloader: function chatPreloader() {
@@ -3592,6 +3568,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              // Call API for chat histories here
               state.commit("setChatHistory", payload);
 
             case 1:
@@ -3602,13 +3579,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee);
     }))();
   },
-  setConverse: function setConverse(state, payload) {
+  setContacts: function setContacts(state, payload) {
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              state.commit("setConverse", payload);
+              // Call API for contacts here
+              state.commit("setContacts", payload);
 
             case 1:
             case "end":
@@ -3618,13 +3596,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, _callee2);
     }))();
   },
-  setContacts: function setContacts(state, payload) {
+  setDumpHistory: function setDumpHistory(state) {
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              state.commit("setContacts", payload);
+              state.commit("setDumpHistory");
 
             case 1:
             case "end":
@@ -3632,22 +3610,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }
       }, _callee3);
-    }))();
-  },
-  setDumpHistory: function setDumpHistory(state) {
-    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              state.commit("setDumpHistory");
-
-            case 1:
-            case "end":
-              return _context4.stop();
-          }
-        }
-      }, _callee4);
     }))();
   }
 });
@@ -3672,9 +3634,6 @@ __webpack_require__.r(__webpack_exports__);
   getChekChat: function getChekChat(state) {
     return state.ngetest;
   },
-  getConverse: function getConverse(state) {
-    return state.converse;
-  },
   getContacts: function getContacts(state) {
     return state.contacts;
   }
@@ -3696,9 +3655,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   setChatHistory: function setChatHistory(state, payload) {
     state.history.push(payload);
-  },
-  setConverse: function setConverse(state, payload) {
-    state.converse.push(payload);
   },
   setContacts: function setContacts(state, payload) {
     state.contacts.push(payload);
@@ -3722,7 +3678,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  history: [],
+  history: [{
+    contact_id: 27,
+    deleted: false,
+    file_location: "",
+    message: "asdasasd21313123",
+    sender_id: 1,
+    time: "3:51:04 PM",
+    user_id: 1
+  }],
   converse: [{
     converse_id: 1,
     contact_id: 2,
@@ -3793,7 +3757,7 @@ __webpack_require__.r(__webpack_exports__);
     contact_id: 22,
     owner_id: 1,
     user_id: 22,
-    contact_name: "Cak Pri",
+    contact_name: "Cak PAIDI",
     contact_pict: "/assets/images/faces/5.jpg",
     isChatting: false,
     last_message_time: "23 minute ago",
@@ -33358,27 +33322,23 @@ var render = function() {
       _vm._v(" "),
       _c("Sidebar"),
       _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "main-content-wrap sidenav-open d-flex flex-column" },
-        [
-          _c(
-            "div",
-            { staticClass: "main-content" },
-            [
-              _c(
-                "transition",
-                { attrs: { name: "fade", mode: "out-in" } },
-                [_c("router-view")],
-                1
-              ),
-              _vm._v(" "),
-              _c("MyFooter")
-            ],
-            1
-          )
-        ]
-      )
+      _c("div", { staticClass: "main-content-wrap d-flex flex-column" }, [
+        _c(
+          "div",
+          { staticClass: "main-content" },
+          [
+            _c(
+              "transition",
+              { attrs: { name: "fade", mode: "out-in" } },
+              [_c("router-view")],
+              1
+            ),
+            _vm._v(" "),
+            _c("MyFooter")
+          ],
+          1
+        )
+      ])
     ],
     1
   )
@@ -33406,7 +33366,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("div", { staticClass: "side-content-wrap" }, [
     _c(
       "div",
       {
@@ -33502,7 +33462,11 @@ var render = function() {
     [
       _c(
         "div",
-        { staticClass: "chat-sidebar-wrap", attrs: { "data-sidebar": "chat" } },
+        {
+          staticClass: "chat-sidebar-wrap",
+          style: { left: _vm.leftSidebarChat + "px" },
+          attrs: { "data-sidebar": "chat" }
+        },
         [
           _c("div", { staticClass: "border-right" }, [
             _c(
@@ -33512,7 +33476,15 @@ var render = function() {
                   "pt-2 pb-2 pl-3 pr-3 d-flex align-items-center o-hidden box-shadow-1 chat-topbar"
               },
               [
-                _vm._m(0),
+                _c(
+                  "a",
+                  {
+                    staticClass: "link-icon d-md-none",
+                    attrs: { "data-sidebar-toggle": "chat" },
+                    on: { click: _vm.changeleftSidebarChat }
+                  },
+                  [_c("i", { staticClass: "icon-regular ml-0 mr-3 i-Left" })]
+                ),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group m-0 flex-grow-1" }, [
                   _c("input", {
@@ -33561,13 +33533,13 @@ var render = function() {
                       [_vm._v("\n\t\t\t\t\t\tRecent\n\t\t\t\t\t")]
                     ),
                     _vm._v(" "),
-                    _vm._l(_vm.contacts, function(contact) {
+                    _vm._l(_vm.filteredCOntact, function(contact) {
                       return [
                         contact.isChatting
                           ? _c(
                               "div",
                               {
-                                key: contact.contact_id,
+                                key: contact.messae,
                                 staticClass:
                                   "p-3 d-flex align-items-center border-bottom contact",
                                 class: { online: contact.isActive },
@@ -33609,9 +33581,9 @@ var render = function() {
                       [_vm._v("\n\t\t\t\t\t\tContacts\n\t\t\t\t\t")]
                     ),
                     _vm._v(" "),
-                    _vm._l(_vm.contacts, function(contact) {
+                    _vm._l(_vm.filteredCOntact, function(contact) {
                       return [
-                        !contact.isChatting
+                        contact.isChatting === false
                           ? _c(
                               "div",
                               {
@@ -33656,7 +33628,7 @@ var render = function() {
           attrs: { "data-sidebar-content": "chat" }
         },
         [
-          _vm.current_contact.isChatting
+          _vm.isClickingCOntact
             ? [
                 _c(
                   "div",
@@ -33665,7 +33637,18 @@ var render = function() {
                       "d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar"
                   },
                   [
-                    _vm._m(1),
+                    _c(
+                      "a",
+                      {
+                        staticClass: " d-md-none",
+                        on: { click: _vm.changeleftSidebarChat }
+                      },
+                      [
+                        _c("i", {
+                          staticClass: "icon-regular i-Right ml-0 mr-3"
+                        })
+                      ]
+                    ),
                     _vm._v(" "),
                     _c("div", { staticClass: "d-flex align-items-center" }, [
                       _c("img", {
@@ -33688,201 +33671,172 @@ var render = function() {
                   ]
                 ),
                 _vm._v(" "),
+                _c("myScroll", { ref: "vs", attrs: { ops: _vm.ops } }, [
+                  _c(
+                    "div",
+                    { staticClass: "chat-content perfect-scrollbar" },
+                    _vm._l(_vm.histories, function(item, idx) {
+                      return _c("div", { key: idx }, [
+                        item.user_id !== _vm.current_user_id
+                          ? _c("div", { staticClass: "d-flex mb-4" }, [
+                              _c(
+                                "div",
+                                { staticClass: "message flex-grow-1" },
+                                [
+                                  _c("div", { staticClass: "d-flex" }, [
+                                    _c(
+                                      "p",
+                                      {
+                                        staticClass:
+                                          "mb-1 text-title text-16 flex-grow-1"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n\t\t\t\t\t\t\t\t\t\t" +
+                                            _vm._s(item.user_name) +
+                                            "\n\t\t\t\t\t\t\t\t\t"
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "span",
+                                      { staticClass: "text-small text-muted" },
+                                      [_vm._v(" " + _vm._s(item.time) + " ")]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("p", { staticClass: "m-0" }, [
+                                    _vm._v(
+                                      "\n\t\t\t\t\t\t\t\t\t" +
+                                        _vm._s(item.message) +
+                                        "\n\t\t\t\t\t\t\t\t"
+                                    )
+                                  ])
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c("img", {
+                                staticClass: "avatar-sm rounded-circle ml-3",
+                                attrs: {
+                                  src: "/assets/images/faces/13.jpg",
+                                  alt: ""
+                                }
+                              })
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        item.user_id === _vm.current_user_id
+                          ? _c("div", { staticClass: "d-flex mb-4 user" }, [
+                              _c("img", {
+                                staticClass: "avatar-sm rounded-circle mr-3",
+                                attrs: {
+                                  src: "/assets/images/faces/1.jpg",
+                                  alt: ""
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "message flex-grow-1" },
+                                [
+                                  _c("div", { staticClass: "d-flex" }, [
+                                    _c(
+                                      "p",
+                                      {
+                                        staticClass:
+                                          "mb-1 text-title text-16 flex-grow-1"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n\t\t\t\t\t\t\t\t\t\t" +
+                                            _vm._s(item.user_name) +
+                                            "\n\t\t\t\t\t\t\t\t\t"
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "span",
+                                      { staticClass: "text-small text-muted" },
+                                      [_vm._v(_vm._s(item.time))]
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("p", { staticClass: "m-0" }, [
+                                    _vm._v(_vm._s(item.message) + ".")
+                                  ])
+                                ]
+                              )
+                            ])
+                          : _vm._e()
+                      ])
+                    }),
+                    0
+                  )
+                ]),
+                _vm._v(" "),
                 _c(
                   "div",
                   {
                     staticClass:
-                      "chat-content perfect-scrollbar chat-room-container",
-                    attrs: { "data-suppress-scroll-x": "true" }
+                      "pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area"
                   },
                   [
                     _c(
-                      "myScroll",
-                      { ref: "vs", attrs: { ops: _vm.ops } },
-                      _vm._l(_vm.histories, function(item, idx) {
-                        return _c(
-                          "div",
-                          {
-                            key: idx,
-                            staticClass: "costume-container-chat-item"
-                          },
-                          [
-                            item.contact_id != _vm.current_user_id
-                              ? _c("div", { staticClass: "d-flex mb-4" }, [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "message flex-grow-1 chat-buble"
-                                    },
-                                    [
-                                      _c("div", { staticClass: "d-flex" }, [
-                                        _c(
-                                          "p",
-                                          {
-                                            staticClass:
-                                              "mb-1 text-title text-16 flex-grow-1"
-                                          },
-                                          [
-                                            _vm._v(
-                                              "\n\t\t\t\t\t\t\t\t\t\t" +
-                                                _vm._s(item.user_name) +
-                                                "\n\t\t\t\t\t\t\t\t\t"
-                                            )
-                                          ]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "span",
-                                          {
-                                            staticClass: "text-small text-muted"
-                                          },
-                                          [
-                                            _vm._v(
-                                              " " + _vm._s(item.time) + " "
-                                            )
-                                          ]
-                                        )
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("p", { staticClass: "m-0" }, [
-                                        _vm._v(
-                                          "\n\t\t\t\t\t\t\t\t\t" +
-                                            _vm._s(item.message) +
-                                            "\n\t\t\t\t\t\t\t\t"
-                                        )
-                                      ])
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("img", {
-                                    staticClass:
-                                      "avatar-sm rounded-circle ml-3",
-                                    attrs: {
-                                      src: "/assets/images/faces/13.jpg",
-                                      alt: ""
-                                    }
-                                  })
-                                ])
-                              : _c("div", { staticClass: "d-flex mb-4 user" }, [
-                                  _c("img", {
-                                    staticClass:
-                                      "avatar-sm rounded-circle mr-3",
-                                    attrs: {
-                                      src: "/assets/images/faces/1.jpg",
-                                      alt: ""
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "message flex-grow-1 chat-buble"
-                                    },
-                                    [
-                                      _c("div", { staticClass: "d-flex" }, [
-                                        _c(
-                                          "p",
-                                          {
-                                            staticClass:
-                                              "mb-1 text-title text-16 flex-grow-1"
-                                          },
-                                          [
-                                            _vm._v(
-                                              "\n\t\t\t\t\t\t\t\t\t\t" +
-                                                _vm._s(item.user_name) +
-                                                "\n\t\t\t\t\t\t\t\t\t"
-                                            )
-                                          ]
-                                        ),
-                                        _vm._v(" "),
-                                        _c(
-                                          "span",
-                                          {
-                                            staticClass: "text-small text-muted"
-                                          },
-                                          [_vm._v(_vm._s(item.time))]
-                                        )
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("p", { staticClass: "m-0" }, [
-                                        _vm._v(_vm._s(item.message) + ".")
-                                      ])
-                                    ]
-                                  )
-                                ])
-                          ]
-                        )
-                      }),
-                      0
-                    )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c("div", { staticClass: "card" }, [
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area"
-                    },
-                    [
-                      _c(
-                        "form",
-                        {
-                          staticClass: "inputForm",
-                          on: {
-                            submit: function($event) {
-                              $event.preventDefault()
-                              return _vm.sendMessage($event)
-                            }
+                      "form",
+                      {
+                        on: {
+                          submit: function($event) {
+                            $event.preventDefault()
+                            return _vm.sendMessage($event)
                           }
-                        },
-                        [
-                          _c("div", { staticClass: "form-group" }, [
-                            _c("textarea", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.message,
-                                  expression: "form.message"
-                                }
-                              ],
-                              staticClass: "form-control form-control-rounded",
-                              attrs: {
-                                placeholder: "Type your message",
-                                name: "message",
-                                id: "message",
-                                cols: "30",
-                                rows: "3"
-                              },
-                              domProps: { value: _vm.form.message },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.form,
-                                    "message",
-                                    $event.target.value
-                                  )
-                                }
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("textarea", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.message,
+                                expression: "form.message"
                               }
-                            })
-                          ]),
-                          _vm._v(" "),
-                          _vm._m(2)
-                        ]
-                      )
-                    ]
-                  )
-                ])
+                            ],
+                            staticClass: "form-control form-control-rounded",
+                            attrs: {
+                              placeholder: "Type your message",
+                              name: "message",
+                              id: "message",
+                              cols: "30",
+                              rows: "3"
+                            },
+                            domProps: { value: _vm.form.message },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "message",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          })
+                        ]),
+                        _vm._v(" "),
+                        _vm._m(0)
+                      ]
+                    )
+                  ]
+                )
               ]
-            : [_c("div", { staticClass: "default-chat" })]
+            : _vm._e(),
+          _vm._v(" "),
+          !_vm.isClickingCOntact ? [_vm._m(1)] : _vm._e()
         ],
         2
       )
@@ -33890,32 +33844,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "a",
-      {
-        staticClass: "link-icon d-md-none",
-        attrs: { "data-sidebar-toggle": "chat" }
-      },
-      [_c("i", { staticClass: "icon-regular ml-0 mr-3 i-Left" })]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "a",
-      {
-        staticClass: "link-icon d-md-none",
-        attrs: { "data-sidebar-toggle": "chat" }
-      },
-      [_c("i", { staticClass: "icon-regular i-Right ml-0 mr-3" })]
-    )
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -33935,8 +33863,34 @@ var staticRenderFns = [
           staticClass: "btn btn-icon btn-rounded btn-outline-primary",
           attrs: { type: "button" }
         },
-        [_c("i", { staticClass: "i-Add-File" })]
+        [_c("i", { staticClass: "i-Paper-Plane" })]
       )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "default-chat" }, [
+      _c("div", { staticClass: "default-chat2" }, [
+        _c(
+          "div",
+          {
+            staticClass: "d-flex pl-3 pr-3 pt-2 pb-2 o-hidden chat-topbar",
+            staticStyle: { "background-color": "transparent" }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "link-icon d-md-none",
+                attrs: { "data-sidebar-toggle": "chat" }
+              },
+              [_c("i", { staticClass: "icon-regular i-Right ml-0 mr-3" })]
+            )
+          ]
+        )
+      ])
     ])
   }
 ]

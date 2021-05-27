@@ -3,8 +3,9 @@
 		<MyHeader></MyHeader>
 
 		<Sidebar></Sidebar>
-		<div class="main-content-wrap sidenav-open d-flex flex-column">
+		<div class="main-content-wrap d-flex flex-column">
 			<div class="main-content">
+				
 				<transition name="fade" mode="out-in">
 					<router-view></router-view>
 				</transition>

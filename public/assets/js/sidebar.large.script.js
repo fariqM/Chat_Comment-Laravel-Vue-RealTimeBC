@@ -99,22 +99,22 @@ $(document).ready(function() {
   
 
   // Toggle menus on click on header toggle icon
-  $sidebarToggle.on("click", function(event) {
-    let isSidebarOpen = $sidebarLeft.hasClass("open");
-    let isSidebarSecOpen = $sidebarLeftSecondary.hasClass("open");
-    let dataItem = $(".nav-item.active").data("item");
-    if (isSidebarOpen && isSidebarSecOpen && gullUtils.isMobile()) {
-      closeSidebar();
-      closeSidebarSecondary();
-    } else if (isSidebarOpen && isSidebarSecOpen) {
-      closeSidebarSecondary();
-    } else if (isSidebarOpen) {
-      closeSidebar();
-    } else if (!isSidebarOpen && !isSidebarSecOpen && !dataItem) {
-      openSidebar();
-    } else if (!isSidebarOpen && !isSidebarSecOpen) {
-      openSidebar();
-      openSidebarSecondary();
-    }
-  });
+  // $sidebarToggle.on("click", function(event) {
+  //   let isSidebarOpen = $sidebarLeft.hasClass("open");
+  //   let isSidebarSecOpen = $sidebarLeftSecondary.hasClass("open");
+  //   let dataItem = $(".nav-item.active").data("item");
+  //   if (isSidebarOpen && isSidebarSecOpen && gullUtils.isMobile()) {
+  //     closeSidebar();
+  //     closeSidebarSecondary();
+  //   } else if (isSidebarOpen && isSidebarSecOpen) {
+  //     closeSidebarSecondary();
+  //   } else if (isSidebarOpen) {
+  //     closeSidebar();
+  //   } else if (!isSidebarOpen && !isSidebarSecOpen && !dataItem) {
+  //     openSidebar();
+  //   } else if (!isSidebarOpen && !isSidebarSecOpen) {
+  //     openSidebar();
+  //     openSidebarSecondary();
+  //   }
+  // });
 });

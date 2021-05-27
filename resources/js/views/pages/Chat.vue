@@ -1,11 +1,11 @@
 <template>
 	<div data-sidebar-container="chat" class="card chat-sidebar-container">
-		<div data-sidebar="chat" class="chat-sidebar-wrap">
+		<div  v-bind:style="{left : leftSidebarChat + 'px'}" data-sidebar="chat" class="chat-sidebar-wrap">
 			<div class="border-right">
 				<div
 					class="pt-2 pb-2 pl-3 pr-3 d-flex align-items-center o-hidden box-shadow-1 chat-topbar"
 				>
-					<a data-sidebar-toggle="chat" class="link-icon d-md-none">
+					<a @click="changeleftSidebarChat" data-sidebar-toggle="chat" class="link-icon d-md-none">
 						<i class="icon-regular ml-0 mr-3 i-Left"></i>
 					</a>
 					<div class="form-group m-0 flex-grow-1">
@@ -28,10 +28,10 @@
 							Recent
 						</div>
 
-						<template v-for="contact in contacts">
-							<div 
-								:key="contact.contact_id"
+						<template v-for="contact in filteredCOntact">
+							<div
 								v-if="contact.isChatting"
+								:key="contact.messae"
 								@click="contactClick(contact)"
 								:class="{ online: contact.isActive }"
 								class="p-3 d-flex align-items-center border-bottom contact"
@@ -59,10 +59,10 @@
 							Contacts
 						</div>
 
-						<template v-for="contact in contacts">
+						<template v-for="contact in filteredCOntact">
 							<div
+								v-if="contact.isChatting === false"
 								@click="contactClick(contact)"
-								v-if="!contact.isChatting"
 								:key="contact.contact_id"
 								:class="{ online: contact.isActive }"
 								class="p-3 d-flex border-bottom align-items-center contact"
@@ -82,11 +82,11 @@
 
 		<!-- Chat Panel -->
 		<div data-sidebar-content="chat" class="chat-content-wrap">
-			<template v-if="current_contact.isChatting">
+			<template v-if="isClickingCOntact">
 				<div
 					class="d-flex pl-3 pr-3 pt-2 pb-2 o-hidden box-shadow-1 chat-topbar"
 				>
-					<a data-sidebar-toggle="chat" class="link-icon d-md-none">
+					<a @click="changeleftSidebarChat"  class=" d-md-none">
 						<i class="icon-regular i-Right ml-0 mr-3"></i>
 					</a>
 					<div class="d-flex align-items-center">
@@ -101,22 +101,12 @@
 					</div>
 				</div>
 
-				<div
-					class="chat-content perfect-scrollbar chat-room-container"
-					data-suppress-scroll-x="true"
-				>
-					<myScroll :ops="ops" ref="vs">
-						<div
-							v-for="(item, idx) in histories"
-							:key="idx"
-							class="costume-container-chat-item"
-						>
-							<!-- Your Chat -->
-							<div
-								v-if="item.contact_id != current_user_id"
-								class="d-flex mb-4"
-							>
-								<div class="message flex-grow-1 chat-buble">
+				<myScroll :ops="ops" ref="vs">
+					<!-- Item Chat Container -->
+					<div class="chat-content perfect-scrollbar">
+						<div v-for="(item, idx) in histories" :key="idx">
+							<div v-if="item.user_id !== current_user_id" class="d-flex mb-4">
+								<div class="message flex-grow-1">
 									<div class="d-flex">
 										<p class="mb-1 text-title text-16 flex-grow-1">
 											{{ item.user_name }}
@@ -134,14 +124,16 @@
 								/>
 							</div>
 
-							<!-- Someone else Chat -->
-							<div v-else class="d-flex mb-4 user">
+							<div
+								v-if="item.user_id === current_user_id"
+								class="d-flex mb-4 user"
+							>
 								<img
 									:src="'/assets/images/faces/1.jpg'"
 									alt=""
 									class="avatar-sm rounded-circle mr-3"
 								/>
-								<div class="message flex-grow-1 chat-buble">
+								<div class="message flex-grow-1">
 									<div class="d-flex">
 										<p class="mb-1 text-title text-16 flex-grow-1">
 											{{ item.user_name }}
@@ -152,41 +144,51 @@
 								</div>
 							</div>
 						</div>
-					</myScroll>
-				</div>
-
-				<div class="card">
-					<div class="pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area">
-						<form @submit.prevent="sendMessage" class="inputForm">
-							<div class="form-group">
-								<textarea
-									v-model="form.message"
-									class="form-control form-control-rounded"
-									placeholder="Type your message"
-									name="message"
-									id="message"
-									cols="30"
-									rows="3"
-								></textarea>
-							</div>
-							<div class="d-flex">
-								<div class="flex-grow-1"></div>
-								<button class="btn btn-icon btn-rounded btn-primary mr-2">
-									<i class="i-Paper-Plane"></i>
-								</button>
-								<button
-									class="btn btn-icon btn-rounded btn-outline-primary"
-									type="button"
-								>
-									<i class="i-Add-File"></i>
-								</button>
-							</div>
-						</form>
 					</div>
+				</myScroll>
+
+				<div class="pl-3 pr-3 pt-3 pb-3 box-shadow-1 chat-input-area">
+					<form @submit.prevent="sendMessage">
+						<div class="form-group">
+							<textarea
+								v-model="form.message"
+								class="form-control form-control-rounded"
+								placeholder="Type your message"
+								name="message"
+								id="message"
+								cols="30"
+								rows="3"
+							></textarea>
+						</div>
+						<div class="d-flex">
+							<div class="flex-grow-1"></div>
+							<button class="btn btn-icon btn-rounded btn-primary mr-2">
+								<i class="i-Paper-Plane"></i>
+							</button>
+							<button
+								class="btn btn-icon btn-rounded btn-outline-primary"
+								type="button"
+							>
+								<i class="i-Paper-Plane"></i>
+							</button>
+						</div>
+					</form>
 				</div>
 			</template>
-			<template v-else>
-				<div class="default-chat"></div>
+
+			<template v-if="!isClickingCOntact">
+				<div class="default-chat">
+					<div class="default-chat2">
+						<div
+							style="background-color: transparent"
+							class="d-flex pl-3 pr-3 pt-2 pb-2 o-hidden chat-topbar"
+						>
+							<a data-sidebar-toggle="chat" class="link-icon d-md-none">
+								<i class="icon-regular i-Right ml-0 mr-3"></i>
+							</a>
+						</div>
+					</div>
+				</div>
 			</template>
 		</div>
 
@@ -205,65 +207,34 @@ export default {
 	},
 	data() {
 		return {
-			messages: {
-				contact_id: 1,
-				sender: 0,
-				contact_name: "Cak Mad",
+			leftSidebarChat: 0,
+			isClickingCOntact: false,
+			chat: {
+				contact_id: 0,
+				sender_id: 0,
+				user_id: 0,
 				message: "",
+				file_location: "",
+				deleted: false,
 				time: "",
+			},
+			form: {
+				message: "",
+				file_location: "",
+				deleted: false,
 			},
 			contactSearch: "",
 			current_contact: {
-				contact_id: 4,
+				contact_id: 0,
+				user_id: 0,
 				isChatting: false,
-				pict: "/assets/images/logo.png",
+				pict: "",
 				name: "",
 				last_message_time: "",
 				isActive: true,
 				converse_id: "",
 			},
-			form: {
-				user_id: 1,
-				user_name: "Cak Mad",
-				message: "",
-				time: "",
-			},
-			history: [],
-			current_user_id: 2,
-			items: [
-				{
-					log_id: 1,
-					username: "Cak Dul",
-					last_message: "Apek bozz",
-					last_message_time: "22 minutes ago",
-					history: [
-						{
-							user_id: 1,
-							user_name: "Cak Mad",
-							message: "sembarang wes asdasdasdjkasjdkajskdjkj",
-							time: "28 minutes ago",
-						},
-						{
-							user_id: 2,
-							user_name: "Cak Dul",
-							message: "asdasdasdasd",
-							time: "26 minutes ago",
-						},
-						{
-							user_id: 1,
-							user_name: "Cak Mad",
-							message: "hallo cak piye kabare",
-							time: "24 minutes ago",
-						},
-						{
-							user_id: 2,
-							user_name: "Cak Dul",
-							message: "Apek bozz",
-							time: "22 minutes ago",
-						},
-					],
-				},
-			],
+			current_user_id: 1,
 			ContactScroll_ops: {
 				vuescroll: {
 					mode: "native",
@@ -355,14 +326,13 @@ export default {
 	},
 	computed: {
 		...mapGetters({ histories: "chat/getHistory" }),
-		...mapGetters({ converses: "chat/getConverse" }),
 		...mapGetters({ contacts: "chat/getContacts" }),
 
 		// Search Contact logic
 		filteredCOntact: function () {
 			// should be
-			return this.converses.filter((converse) => {
-				return converse.contact_name.toLowerCase().match(this.contactSearch);
+			return this.contacts.filter((contact) => {
+				return contact.contact_name.toLowerCase().match(this.contactSearch);
 			});
 		},
 	},
@@ -371,6 +341,10 @@ export default {
 		setTimeout(() => this.scrollDownChat(), 70);
 	},
 	methods: {
+		changeleftSidebarChat(){
+			this.leftSidebarChat == -260 ? this.leftSidebarChat = 0 : this.leftSidebarChat = -260 
+			console.log(this.leftSidebarChat);
+		},
 		...mapActions(["chat/setChatHistory"]),
 		...mapActions(["chat/setDumpHistory"]),
 		getHistories() {
@@ -378,21 +352,11 @@ export default {
 		},
 
 		contactClick(value) {
-			// console.log(value);
-			this.form.message === "";
-			this.current_contact.isChatting = true;
+			this.isClickingCOntact = true;
 			this.current_contact.name = value.contact_name;
 			this.current_contact.pict = value.contact_pict;
-			// this.current_contact.converse_id = API
-
-			this.messages.contact_id = value.contact_id;
-			this.messages.message = "";
-			this.messages.contact_name = value.contact_name;
-
-			// let dumpMessage = [];
-			this["chat/setDumpHistory"]();
-			// this.histories = API
-			// this.histories = [];
+			this.current_contact.user_id = value.user_id;
+			this.current_contact.contact_id = value.contact_id;
 		},
 		scrollDownChat() {
 			this.$refs["vs"].scrollTo(
@@ -405,20 +369,22 @@ export default {
 		},
 		sendMessage() {
 			let s = new Date();
+			this.chat.time = s.toLocaleTimeString();
+			this.chat.message = this.form.message;
+			this.chat.sender_id = this.current_user_id;
+			this.chat.user_id = this.current_contact.user_id;
+			this.chat.contact_id = this.current_contact.contact_id;
 
-			this.messages.time = s.toLocaleTimeString();
-			this.messages.sender = this.current_user_id;
-			this.messages.message = this.form.message;
-			if (this.form.message === "") {
+			if (this.chat.message === "") {
 				this.$toast.error("please send a text first", "Oops,", {
 					position: "topRight",
 				});
 			} else {
-				this["chat/setChatHistory"](this.messages);
-				// this.$store.dispatch("chat/setChatHistory", messages)
+				this["chat/setChatHistory"](this.chat);
 				this.form.message = "";
+				this.form.file_location = "";
 				setTimeout(() => this.scrollDownChat(), 70);
-				console.log(this.messages);
+				console.log(this.chat);
 			}
 		},
 		chatPreloader() {

@@ -1,7 +1,6 @@
 <template>
-	<div>
+	<div class="side-content-wrap">
 		<div
-				
 			v-bind:class="{ open: SidebarOpen }"
 			class="sidebar-left rtl-ps-none"
 			
