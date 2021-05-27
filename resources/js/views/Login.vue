@@ -53,7 +53,7 @@
 							</router-link>
 							<router-link
 								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
-								:to="{ name: 'dashboard.page' }"
+								:to="{ name: 'home' }"
 							>
 								<i class="i-Mail-with-At-Sign"></i> View Inside
 							</router-link>

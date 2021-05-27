@@ -40,12 +40,55 @@ export default {
     ],
     contacts: [
         {
-            user_id: 34,
-            isActive: false,
+            contact_id:2,
+            owner_id: 1,
+            user_id:34,
+            contact_name: "Cak Paidi",
             contact_pict: "/assets/images/faces/13.jpg",
-            contact_name: "Cak Di",
+            isChatting:false,
+            last_message_time: "23 minute ago",
+            last_message: "yo cak",
+            isActive: false,
             email: "asdasdas"
-        }
+        },
+
+        {
+            contact_id:5,
+            owner_id: 1,
+            user_id:22,
+            contact_name: "Cak Pri",
+            contact_pict: "/assets/images/faces/5.jpg",
+            isChatting:false,
+            last_message_time: "23 minute ago",
+            last_message: "yo cak",
+            isActive: false,
+            email: "asdasdas"
+        },
+        {
+            contact_id:27,
+            owner_id: 1,
+            user_id:65,
+            contact_name: "Cak Jono",
+            contact_pict: "/assets/images/faces/10.jpg",
+            isChatting:true,
+            last_message_time: "23 minute ago",
+            last_message: "yo cak",
+            isActive: true,
+            email: "asdasdas"
+        },
+        {
+            contact_id:22,
+            owner_id: 1,
+            user_id:22,
+            contact_name: "Cak Pri",
+            contact_pict: "/assets/images/faces/5.jpg",
+            isChatting:false,
+            last_message_time: "23 minute ago",
+            last_message: "yo cak",
+            isActive: true,
+            email: "asdasdas"
+        },
+       
     ],
     ngetest: "testing chat state"
 };

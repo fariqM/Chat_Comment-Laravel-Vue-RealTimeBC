@@ -28,22 +28,23 @@
 							Recent
 						</div>
 
-						<template v-for="(converse, idx) in filteredCOntact">
-							<div
-								:key="idx"
-								@click="contactClick(converse)"
-								:class="{ online: converse.isActive }"
+						<template v-for="contact in contacts">
+							<div 
+								:key="contact.contact_id"
+								v-if="contact.isChatting"
+								@click="contactClick(contact)"
+								:class="{ online: contact.isActive }"
 								class="p-3 d-flex align-items-center border-bottom contact"
 							>
 								<img
-									:src="converse.contact_pict"
+									:src="contact.contact_pict"
 									class="avatar-sm rounded-circle mr-3"
 									alt=""
 								/>
 								<div>
-									<h6 class="m-0">{{ converse.contact_name }}</h6>
+									<h6 class="m-0">{{ contact.contact_name }}</h6>
 									<span class="text-muted text-small">{{
-										converse.last_message_time
+										contact.last_message_time
 									}}</span>
 								</div>
 							</div>
@@ -61,7 +62,8 @@
 						<template v-for="contact in contacts">
 							<div
 								@click="contactClick(contact)"
-								:key="contact.user_id"
+								v-if="!contact.isChatting"
+								:key="contact.contact_id"
 								:class="{ online: contact.isActive }"
 								class="p-3 d-flex border-bottom align-items-center contact"
 							>
@@ -77,6 +79,8 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Chat Panel -->
 		<div data-sidebar-content="chat" class="chat-content-wrap">
 			<template v-if="current_contact.isChatting">
 				<div
@@ -108,7 +112,10 @@
 							class="costume-container-chat-item"
 						>
 							<!-- Your Chat -->
-							<div v-if="item.contact_id != current_user_id" class="d-flex mb-4">
+							<div
+								v-if="item.contact_id != current_user_id"
+								class="d-flex mb-4"
+							>
 								<div class="message flex-grow-1 chat-buble">
 									<div class="d-flex">
 										<p class="mb-1 text-title text-16 flex-grow-1">
@@ -182,6 +189,8 @@
 				<div class="default-chat"></div>
 			</template>
 		</div>
+
+		<!-- End Chat Panel -->
 	</div>
 </template>
 
@@ -196,9 +205,9 @@ export default {
 	},
 	data() {
 		return {
-			messages : {
+			messages: {
 				contact_id: 1,
-				sender:0,
+				sender: 0,
 				contact_name: "Cak Mad",
 				message: "",
 				time: "",
@@ -351,6 +360,7 @@ export default {
 
 		// Search Contact logic
 		filteredCOntact: function () {
+			// should be
 			return this.converses.filter((converse) => {
 				return converse.contact_name.toLowerCase().match(this.contactSearch);
 			});
@@ -363,7 +373,7 @@ export default {
 	methods: {
 		...mapActions(["chat/setChatHistory"]),
 		...mapActions(["chat/setDumpHistory"]),
-		getHistories(){
+		getHistories() {
 			// get histories from API when clicking the contact
 		},
 
@@ -373,18 +383,16 @@ export default {
 			this.current_contact.isChatting = true;
 			this.current_contact.name = value.contact_name;
 			this.current_contact.pict = value.contact_pict;
-			// this.current_contact.converse_id = API 
+			// this.current_contact.converse_id = API
 
-			this.messages.contact_id = value.contact_id
+			this.messages.contact_id = value.contact_id;
 			this.messages.message = "";
-			this.messages.contact_name = value.contact_name
+			this.messages.contact_name = value.contact_name;
 
 			// let dumpMessage = [];
 			this["chat/setDumpHistory"]();
 			// this.histories = API
 			// this.histories = [];
-			
-
 		},
 		scrollDownChat() {
 			this.$refs["vs"].scrollTo(
@@ -397,9 +405,9 @@ export default {
 		},
 		sendMessage() {
 			let s = new Date();
-			
+
 			this.messages.time = s.toLocaleTimeString();
-			this.messages.sender = this.current_user_id
+			this.messages.sender = this.current_user_id;
 			this.messages.message = this.form.message;
 			if (this.form.message === "") {
 				this.$toast.error("please send a text first", "Oops,", {
@@ -500,7 +508,6 @@ export default {
 				});
 			});
 		},
-
 	},
 };
 </script>

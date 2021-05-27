@@ -20,6 +20,9 @@
 import Sidebar from "./Sidebar";
 import MyHeader from "./Header";
 import MyFooter from "./Footer";
+import CompStore from "../../store/component/ComptStore"
+import {  mapGetters } from "vuex";
+
 
 export default {
 	components: {
@@ -27,6 +30,19 @@ export default {
 		MyHeader,
 		MyFooter,
 	},
+	created() {
+		this.$store.registerModule("compt", CompStore);
+	},
+	beforeDestroy() {
+		this.$store.unregisterModule("compt");
+	},
+	computed:{
+		...mapGetters({ sidebarStatus: "compt/getSidebarOpen" }),
+		
+	},
+	methods:{
+		
+	}
 	
 };
 </script>
