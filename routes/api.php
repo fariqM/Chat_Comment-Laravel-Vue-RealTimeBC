@@ -18,7 +18,15 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+
+
 Route::namespace('App\Http\Controllers')->group(function(){
     Route::get('/comments', 'CommentController@fetchComments');
     Route::post('/comments', 'CommentController@store');
+});
+
+Route::middleware('auth:api')->group(function(){
+    Route::namespace('App\Http\Controllers')->group(function(){
+        Route::get('/getcontacts', 'ContactController@index');
+    });
 });

@@ -117,6 +117,7 @@ export default {
 		},
 		RegisterAction() {
 			axios.get("/sanctum/csrf-cookie").then((fun) => {
+				console.log("this is the CSRF-Cookie from Sanctum : "+JSON.stringify(fun));
 				try {
 					axios.post("/register", this.form).then((response) => {
 						console.log("register success");

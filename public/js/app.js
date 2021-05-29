@@ -2096,9 +2096,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      contacts: [],
       form: {
         email: "",
         password: ""
@@ -2123,11 +2142,16 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    logout: function logout() {
-      var _this2 = this;
-
+    CheckData: function CheckData() {
       axios.get("/sanctum/csrf-cookie").then(function (response) {
-        axios.post("/logout", _this2.formData).then(function (response) {
+        axios.get("/api/getcontacts").then(function (fun) {
+          console.log(fun);
+        });
+      });
+    },
+    logout: function logout() {
+      axios.get("/sanctum/csrf-cookie").then(function (response) {
+        axios.post("/logout").then(function (response) {
           console.log("user has logout");
         })["catch"](function (error) {
           return console.log(error);
@@ -2269,6 +2293,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get("/sanctum/csrf-cookie").then(function (fun) {
+        console.log("this is the CSRF-Cookie from Sanctum : " + JSON.stringify(fun));
+
         try {
           axios.post("/register", _this.form).then(function (response) {
             console.log("register success");
@@ -3457,30 +3483,28 @@ var app = new Vue({
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"); // import 'vue-tel-input/dist/vue-tel-input.css';
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-window.axios.defaults.headers.common.crossDomain = true; // window.axios.defaults.baseURL = '/api';
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // window.axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+// window.axios.defaults.headers.common.crossDomain = true;
+// window.axios.defaults.baseURL = '/api';
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that
  * all outgoing HTTP requests automatically have it attached. This is just
  * a simple convenience so we don't have to attach every token manually.
  */
+// let token = document.head.querySelector('meta[name="csrf-token"]');
+// if (token) {
+//     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+// } else {
+//     console.error('CSRF token not found: https://adonisjs.com/docs/4.1/csrf');
+// }
 
-var token = document.head.querySelector('meta[name="csrf-token"]');
-
-if (token) {
-  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
-  console.error('CSRF token not found: https://adonisjs.com/docs/4.1/csrf');
-}
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
  * allows your team to easily build robust real-time web applications.
  */
 // import Echo from 'laravel-echo'
-
 
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 /*
@@ -32528,6 +32552,19 @@ var render = function() {
                       [
                         _c("i", { staticClass: "i-Mail-with-At-Sign" }),
                         _vm._v(" View Inside\n\t\t\t\t\t\t")
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text",
+                        on: { click: _vm.CheckData }
+                      },
+                      [
+                        _c("i", { staticClass: "i-Mail-with-At-Sign" }),
+                        _vm._v(" Check Data\n\t\t\t\t\t\t")
                       ]
                     )
                   ],

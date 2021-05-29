@@ -1,5 +1,8 @@
 <template>
-	<div class="auth-layout-wrap" style="background-image: url(/assets/images/photo-wide-4.jpg)">
+	<div
+		class="auth-layout-wrap"
+		style="background-image: url(/assets/images/photo-wide-4.jpg)"
+	>
 		<div class="auth-content">
 			<div class="card o-hidden">
 				<div class="row">
@@ -13,7 +16,7 @@
 								<div class="form-group">
 									<label for="email">Email address</label>
 									<input
-									v-model="form.email"
+										v-model="form.email"
 										id="email"
 										class="form-control form-control-rounded"
 										type="email"
@@ -22,7 +25,7 @@
 								<div class="form-group">
 									<label for="password">Password</label>
 									<input
-									v-model="form.password"
+										v-model="form.password"
 										id="password"
 										class="form-control form-control-rounded"
 										type="password"
@@ -32,7 +35,10 @@
 									Sign In
 								</button>
 							</form>
-							<button v-on:click="logout" class="btn btn-rounded btn-primary btn-block mt-2">
+							<button
+								v-on:click="logout"
+								class="btn btn-rounded btn-primary btn-block mt-2"
+							>
 								Trial Logout
 							</button>
 
@@ -43,7 +49,13 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6 text-center"  style="background-size: cover;background-image: url(/assets/images/photo-long-3.jpg)">
+					<div
+						class="col-md-6 text-center"
+						style="
+							background-size: cover;
+							background-image: url(/assets/images/photo-long-3.jpg);
+						"
+					>
 						<div class="pr-3 auth-right">
 							<router-link
 								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
@@ -57,6 +69,12 @@
 							>
 								<i class="i-Mail-with-At-Sign"></i> View Inside
 							</router-link>
+							<a
+								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
+								@click="CheckData"
+							>
+								<i class="i-Mail-with-At-Sign"></i> Check Data
+							</a>
 						</div>
 					</div>
 				</div>
@@ -69,6 +87,7 @@
 export default {
 	data() {
 		return {
+			contacts: [],
 			form: {
 				email: "",
 				password: "",
@@ -94,11 +113,21 @@ export default {
 				}
 			});
 		},
+		CheckData() {
+			axios
+				.get("/sanctum/csrf-cookie").then((response) => {
+				axios
+					.get("/api/getcontacts").then((fun) => {
+						console.log(fun);
+					});
+			});
+			
+		},
 
 		logout() {
 			axios.get("/sanctum/csrf-cookie").then((response) => {
 				axios
-					.post("/logout", this.formData)
+					.post("/logout")
 					.then((response) => {
 						console.log("user has logout");
 					})

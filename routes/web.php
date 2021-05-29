@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,15 +13,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::view('/{any}', 'app')->where('any','.*');
 
-// Route::get('/', [App\Http\Controllers\CommentController::class, 'index']);
+Auth::routes();
 
-Route::view('/{any}', 'layouts.app')->where('any','.*');
-// Auth::routes();
-// Route::middleware('auth:sanctum')->group(function(){
-//     Route::view('/auth/{any}', 'welcome')->where('any','.*');
-// });
-
-
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
