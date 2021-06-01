@@ -2126,9 +2126,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       contacts: [],
+      progress: 0,
       form: {
-        email: "",
-        password: ""
+        email: "fariq@gmail.com",
+        password: "rangga1822"
       }
     };
   },
@@ -2136,12 +2137,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     handleLogin: function handleLogin() {
       var _this = this;
 
+      // open loading section
+      var loading = this.$vs.loading({
+        progress: 0,
+        color: "#7d33ff",
+        type: "scale"
+      });
+      var interval = setInterval(function () {
+        if (_this.progress <= 100) {
+          loading.changeProgress(_this.progress++);
+        }
+      }, 15); // end open loading section
+
       axios.get("/sanctum/csrf-cookie").then(function (fun) {
         try {
           axios.post("/login", _this.form).then(function (response) {
-            if (response.status == 204 || 200) {
-              console.log("im in");
-            }
+            if (response.status == 204) {
+              // close loading section
+              loading.close();
+              clearInterval(interval);
+              _this.progress = 0; // end close loading section
+              // console.log(response.status);
+
+              _this.$router.push({
+                name: "home"
+              });
+            } // status 200 is when the token is same with last auth
+            else if (response.status == 200) {
+                // close loading section
+                loading.close();
+                clearInterval(interval);
+                _this.progress = 0;
+
+                _this.reLogin(); // end close loading section
+
+              }
           })["catch"](function (error) {
             console.log(error);
           });
@@ -2149,6 +2179,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           console.log(error);
         }
       });
+    },
+    reLogin: function reLogin() {
+      var _this2 = this;
+
+      var loading = this.$vs.loading({
+        background: '#505050',
+        progress: 0,
+        color: "#fff",
+        type: "scale",
+        text: "<h2>Similiar user, please logout before login with another account</h2>"
+      });
+      var interval = setInterval(function () {
+        if (_this2.progress <= 100) {
+          loading.changeProgress(_this2.progress++);
+        }
+      }, 30);
+      setTimeout(function () {
+        loading.close();
+        clearInterval(interval);
+        _this2.progress = 0;
+
+        _this2.$router.push({
+          name: "home"
+        });
+      }, 3000);
     },
     CheckData: function CheckData() {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -2762,7 +2817,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     UserDidntExist: function UserDidntExist() {
-      this.openNotification("top-center", 'danger', "<i class='bx bx-bell' ></i>");
+      this.openNotification("top-center", "danger", "<i class='bx bx-bell' ></i>");
     },
     openNotification: function openNotification() {
       var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -2775,9 +2830,33 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     logout: function logout() {
+      var _this2 = this;
+
+      var loading = this.$vs.loading({
+        progress: 0,
+        color: "#7d33ff",
+        type: "scale"
+      });
+      var interval = setInterval(function () {
+        if (_this2.progress <= 100) {
+          loading.changeProgress(_this2.progress++);
+        }
+      }, 15);
       axios.get("/sanctum/csrf-cookie").then(function (response) {
         axios.post("/logout").then(function (response) {
-          window.location = "http://127.0.0.1:8000/login"; // console.log("user has logout");
+          loading.close();
+          clearInterval(interval);
+          _this2.progress = 0;
+
+          _this2.$toast.info("Thanks for using our app.", "Goodbye! ", {
+            position: "center",
+            icon: "i-Hand",
+            close: false
+          });
+
+          setTimeout(function () {
+            window.location = "http://127.0.0.1:8000/login";
+          }, 2000); // console.log("user has logout");
         })["catch"](function (error) {
           return console.log(error);
         });
@@ -2828,6 +2907,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 
@@ -2839,6 +2921,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     MyHeader: _Header__WEBPACK_IMPORTED_MODULE_1__.default,
     MyFooter: _Footer__WEBPACK_IMPORTED_MODULE_2__.default
   },
+  data: function data() {
+    return {
+      checking: ""
+    };
+  },
+  // beforeRouteEnter(to, from, next) {
+  // 	next((vm) => {
+  // 	});
+  // },
   beforeCreate: function beforeCreate() {
     // console.log(window.location.href);
     var as = window.location.href;
@@ -2848,6 +2939,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       window.location = "http://127.0.0.1:8000/unknown-page";
     } else {// console.log("dont move");
     }
+  },
+  mounted: function mounted() {// console.log("sampaiii");
   },
   created: function created() {
     this.$store.registerModule("compt", _store_component_ComptStore__WEBPACK_IMPORTED_MODULE_3__.default);
@@ -4493,7 +4586,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active, .fade-leave-active {\r\n  transition: opacity .3s ease;\n}\n.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {\r\n  opacity: 0;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active,\r\n.fade-leave-active {\r\n\ttransition: opacity 0.3s ease;\n}\n.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {\r\n\topacity: 0;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -3,7 +3,10 @@
 		<MyHeader></MyHeader>
 
 		<Sidebar></Sidebar>
-		<div class="main-content-wrap d-flex flex-column" v-bind:class="{'sidenav-open': sidenavOpen}">
+		<div
+			class="main-content-wrap d-flex flex-column"
+			v-bind:class="{ 'sidenav-open': sidenavOpen }"
+		>
 			<div class="main-content">
 				<transition name="fade" mode="out-in">
 					<router-view></router-view>
@@ -20,8 +23,8 @@
 import Sidebar from "./Sidebar";
 import MyHeader from "./Header";
 import MyFooter from "./Footer";
-import CompStore from "../../store/component/ComptStore"
-import {  mapGetters } from "vuex";
+import CompStore from "../../store/component/ComptStore";
+import { mapGetters } from "vuex";
 
 export default {
 	components: {
@@ -29,15 +32,30 @@ export default {
 		MyHeader,
 		MyFooter,
 	},
-	beforeCreate(){
+	data() {
+		return {
+			checking: "",
+		};
+	},
+	// beforeRouteEnter(to, from, next) {
+		
+		
+	// 	next((vm) => {
+			
+	// 	});
+	// },
+	beforeCreate() {
 		// console.log(window.location.href);
-		var as= window.location.href
-		if(as == "http://127.0.0.1:8000/app"){
+		var as = window.location.href;
+		if (as == "http://127.0.0.1:8000/app") {
 			// console.log("move");
-			window.location = "http://127.0.0.1:8000/unknown-page"
+			window.location = "http://127.0.0.1:8000/unknown-page";
 		} else {
 			// console.log("dont move");
 		}
+	},
+	mounted() {
+		// console.log("sampaiii");
 	},
 	created() {
 		this.$store.registerModule("compt", CompStore);
@@ -45,23 +63,20 @@ export default {
 	beforeDestroy() {
 		this.$store.unregisterModule("compt");
 	},
-	computed:{
+	computed: {
 		...mapGetters({ sidebarStatus: "compt/getSidebarOpen" }),
-		...mapGetters({ sidenavOpen: "compt/getSidenavOpen"}),
-		
+		...mapGetters({ sidenavOpen: "compt/getSidenavOpen" }),
 	},
-	methods:{
-		
-	}
-	
+	methods: {},
 };
 </script>
 
 <style>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s ease;
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.3s ease;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
+	opacity: 0;
 }
 </style>

@@ -88,21 +88,50 @@ export default {
 	data() {
 		return {
 			contacts: [],
+			progress: 0,
 			form: {
-				email: "",
-				password: "",
+				email: "fariq@gmail.com",
+				password: "rangga1822",
 			},
 		};
 	},
 	methods: {
 		handleLogin() {
+			// open loading section
+			const loading = this.$vs.loading({
+				progress: 0,
+				color: "#7d33ff",
+				type: "scale",
+			});
+			const interval = setInterval(() => {
+				if (this.progress <= 100) {
+					loading.changeProgress(this.progress++);
+				}
+			}, 15);
+			// end open loading section
+
 			axios.get("/sanctum/csrf-cookie").then((fun) => {
 				try {
 					axios
 						.post("/login", this.form)
 						.then((response) => {
-							if (response.status == 204 || 200) {
-								console.log("im in");
+							if (response.status == 204) {
+								// close loading section
+								loading.close();
+								clearInterval(interval);
+								this.progress = 0;
+								// end close loading section
+								// console.log(response.status);
+								this.$router.push({ name: "home" });
+							}
+							// status 200 is when the token is same with last auth
+							else if (response.status == 200) {
+								// close loading section
+								loading.close();
+								clearInterval(interval);
+								this.progress = 0;
+								this.reLogin();
+								// end close loading section
 							}
 						})
 						.catch((error) => {
@@ -113,9 +142,30 @@ export default {
 				}
 			});
 		},
+		reLogin() {
+			const loading = this.$vs.loading({
+				background: '#505050',
+				progress: 0,
+				color: "#fff",
+				type: "scale",
+				text:
+					"<h2>Similiar user, please logout before login with another account</h2>",
+			});
+			const interval = setInterval(() => {
+				if (this.progress <= 100) {
+					loading.changeProgress(this.progress++);
+				}
+			}, 30);
+			setTimeout(() => {
+				loading.close();
+				clearInterval(interval);
+				this.progress = 0;
+				this.$router.push({ name: "home" });
+			}, 3000);
+		},
 		async CheckData() {
 			try {
-				let {data} = await axios.get("/api/getcontacts");
+				let { data } = await axios.get("/api/getcontacts");
 
 				console.log(data);
 				// axios.get("/api/getcontacts").then((fun) => {

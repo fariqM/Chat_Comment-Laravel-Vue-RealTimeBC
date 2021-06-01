@@ -371,7 +371,7 @@ export default {
 		UserDidntExist() {
 			this.openNotification(
 				"top-center",
-				'danger',
+				"danger",
 				`<i class='bx bx-bell' ></i>`
 			);
 		},
@@ -384,11 +384,29 @@ export default {
 			});
 		},
 		logout() {
+			const loading = this.$vs.loading({
+				progress: 0,
+				color: "#7d33ff",
+				type: "scale",
+			});
+			const interval = setInterval(() => {
+				if (this.progress <= 100) {
+					loading.changeProgress(this.progress++);
+				}
+			}, 15);
 			axios.get("/sanctum/csrf-cookie").then((response) => {
 				axios
 					.post("/logout")
 					.then((response) => {
-						window.location = "http://127.0.0.1:8000/login"
+						loading.close();
+						clearInterval(interval);
+						this.progress = 0;
+						this.$toast.info("Thanks for using our app.", "Goodbye! ", {
+							position: "center", icon: "i-Hand", close: false
+						});
+						setTimeout(() => {
+							window.location = "http://127.0.0.1:8000/login";
+						}, 2000);
 						// console.log("user has logout");
 					})
 					.catch((error) => console.log(error));
