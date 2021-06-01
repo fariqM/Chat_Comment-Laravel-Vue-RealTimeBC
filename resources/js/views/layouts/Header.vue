@@ -88,12 +88,12 @@
 				</div>
 				<!-- / Mega menu -->
 				<div class="search-bar">
-					<form @submit.prevent="SearchDialog">
-						<input type="text" placeholder="Search" />
+					<form @submit.prevent="SearchAction">
+						<input v-model="userId" type="text" placeholder="Search" />
 					</form>
 
 					<i
-						@click="SearchDialog"
+						@click="SearchAction"
 						class="search-icon text-muted i-Magnifi-Glass1"
 					></i>
 				</div>
@@ -227,26 +227,12 @@
 							</div>
 							<a class="dropdown-item">Account settings</a>
 							<a class="dropdown-item">Billing history</a>
-							<a class="dropdown-item">Sign out</a>
+							<a @click="logout" class="dropdown-item">Sign out</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-		<!-- Notification if the user_id not exist -->
-		<!-- <div class="center">
-			<vs-button
-				flat
-				color="#7d33ff"
-				icon
-				@click="
-					
-				"
-			>
-				<i class="bx bx-border-top"></i> <i class="bx bx-bell"></i>
-			</vs-button>
-		</div> -->
 		<!-- Contact details if the user_id exist -->
 		<div ref="dialogWeb" class="center">
 			<vs-dialog v-model="activeDialog">
@@ -261,14 +247,15 @@
 							</vs-avatar>
 						</vs-row>
 						<h5 style="margin-top: 5px" class="m-0">
-							<a class="typo_link text-primary t-font-boldest">Jassica Hike</a>
+							<a class="typo_link text-primary t-font-boldest">{{
+								SearchData.name
+							}}</a>
 						</h5>
 						<!-- <h5 class="m-0">Jassica Hike</h5> -->
-						<p class="mt-0">UI/UX Designer</p>
+						<p class="mt-0">{{ SearchData.about }}</p>
 						<div class="separator-breadcrumb border-top"></div>
 						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit.
-							Recusandae cumque.
+							{{ SearchData.bio }}
 						</p>
 						<button @click="UserDidntExist" class="btn btn-primary btn-rounded">
 							Add to contact
@@ -301,7 +288,7 @@
 				</div>
 				<template #footer>
 					<div class="footer-dialog">
-						<vs-button @click="SearchDialog" block> Search </vs-button>
+						<vs-button @click="SearchAction" block> Search </vs-button>
 					</div>
 				</template>
 			</vs-dialog>
@@ -319,6 +306,8 @@ export default {
 			activeDialog: false,
 			activeDialogMobile: false,
 			userId: "",
+			SearchData: {},
+			progress: 0,
 		};
 	},
 	computed: {
@@ -349,17 +338,60 @@ export default {
 			this.activeDialog = !this.activeDialog;
 		},
 		SearchAction() {
-			// here the identity of contact after searching result true
+			// open loading section
+			const loading = this.$vs.loading({
+				progress: 0,
+				color: "#7d33ff",
+				type: "scale",
+			});
+			const interval = setInterval(() => {
+				if (this.progress <= 100) {
+					loading.changeProgress(this.progress++);
+				}
+			}, 10);
+			// end open loading section
+
+			axios.get("/sanctum/csrf-cookie").then((response) => {
+				axios.get(`/api/getsearch-contact/${this.userId}`).then((fun) => {
+					// close loading section
+					loading.close();
+					clearInterval(interval);
+					this.progress = 0;
+					// end close loading section
+
+					if (fun.data.data !== undefined) {
+						this.SearchData = fun.data.data;
+						this.SearchDialog();
+					} else {
+						this.UserDidntExist();
+					}
+				});
+			});
 		},
 		UserDidntExist() {
-			this.openNotification("top-center", "#7d33ff", `<i class='bx bx-bell' ></i>`);
+			this.openNotification(
+				"top-center",
+				'danger',
+				`<i class='bx bx-bell' ></i>`
+			);
 		},
-		openNotification(position = null, border) {
+		openNotification(position = null, color) {
 			const noti = this.$vs.notification({
-				border,
+				color,
 				position,
 				title: "Oooppss..",
 				text: "The Contact you're looking for doesn't exist.",
+			});
+		},
+		logout() {
+			axios.get("/sanctum/csrf-cookie").then((response) => {
+				axios
+					.post("/logout")
+					.then((response) => {
+						window.location = "http://127.0.0.1:8000/login"
+						// console.log("user has logout");
+					})
+					.catch((error) => console.log(error));
 			});
 		},
 	},

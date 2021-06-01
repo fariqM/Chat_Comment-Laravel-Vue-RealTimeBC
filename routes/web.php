@@ -13,8 +13,16 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::view('/{any}', 'app')->where('any','.*');
-
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::middleware('auth')->group(function(){
+    Route::view('/app', '404');
+    Route::view('/app/{any}', 'app')->where('any', '.*');
+});
+Route::view('/{any}', 'app')->where('any','.*');
+
+
+
+

@@ -30,3 +30,7 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/getcontacts', 'ContactController@index');
     });
 });
+
+Route::namespace('App\Http\Controllers')->group(function(){
+    Route::get('/getsearch-contact/{user:id}', 'ContactController@search_contact');
+});

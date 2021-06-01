@@ -113,15 +113,26 @@ export default {
 				}
 			});
 		},
-		CheckData() {
-			axios
-				.get("/sanctum/csrf-cookie").then((response) => {
-				axios
-					.get("/api/getcontacts").then((fun) => {
-						console.log(fun);
-					});
-			});
-			
+		async CheckData() {
+			try {
+				let {data} = await axios.get("/api/getcontacts");
+
+				console.log(data);
+				// axios.get("/api/getcontacts").then((fun) => {
+				// 	console.log(fun);
+				// });
+			} catch (e) {
+				// console.log(e);
+			}
+			// axios.get("/sanctum/csrf-cookie").then((response) => {
+			// 	try {
+			// 		axios.get("/api/getcontacts").then((fun) => {
+			// 			console.log(fun);
+			// 		});
+			// 	} catch (e) {
+			// 		console.log(e);
+			// 	}
+			// });
 		},
 
 		logout() {

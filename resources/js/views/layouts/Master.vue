@@ -30,6 +30,16 @@ export default {
 		MyHeader,
 		MyFooter,
 	},
+	beforeCreate(){
+		// console.log(window.location.href);
+		var as= window.location.href
+		if(as == "http://127.0.0.1:8000/app"){
+			// console.log("move");
+			window.location = "http://127.0.0.1:8000/unknown-page"
+		} else {
+			// console.log("dont move");
+		}
+	},
 	created() {
 		this.$store.registerModule("compt", CompStore);
 	},
