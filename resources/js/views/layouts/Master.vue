@@ -23,14 +23,12 @@ import MyFooter from "./Footer";
 import CompStore from "../../store/component/ComptStore"
 import {  mapGetters } from "vuex";
 
-
 export default {
 	components: {
 		Sidebar,
 		MyHeader,
 		MyFooter,
 	},
-	
 	beforeCreate(){
 		// console.log(window.location.href);
 		var as= window.location.href
