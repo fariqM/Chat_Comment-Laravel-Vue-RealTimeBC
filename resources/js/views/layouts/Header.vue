@@ -88,39 +88,27 @@
 				</div>
 				<!-- / Mega menu -->
 				<div class="search-bar">
-					<input type="text" placeholder="Search" />
-					<i class="search-icon text-muted i-Magnifi-Glass1"></i>
+					<form @submit.prevent="SearchDialog">
+						<input type="text" placeholder="Search" />
+					</form>
+
+					<i
+						@click="SearchDialog"
+						class="search-icon text-muted i-Magnifi-Glass1"
+					></i>
 				</div>
 			</div>
 
 			<div style="margin: auto"></div>
 
 			<div class="header-part-right">
-				<!-- Full screen toggle -->
-				<i
-					class="i-Full-Screen header-icon d-none d-sm-inline-block"
-					data-fullscreen
-				></i>
-				<!-- Grid menu Dropdown -->
-				<div class="dropdown widget_dropdown">
+				<!-- Search Button for Mobile -->
+				<div class="dropdown widget_dropdown search_contact_mobile">
 					<i
-						class="i-Safe-Box text-muted header-icon"
+						@click="activeDialogMobile = !activeDialogMobile"
+						class="i-Magnifi-Glass1 text-muted header-icon"
 						role="button"
-						id="dropdownMenuButton"
-						data-toggle="dropdown"
-						aria-haspopup="true"
-						aria-expanded="false"
 					></i>
-					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<div class="menu-icon-grid">
-							<a href="#"><i class="i-Shop-4"></i> Home</a>
-							<a href="#"><i class="i-Library"></i> UI Kits</a>
-							<a href="#"><i class="i-Drop"></i> Apps</a>
-							<a href="#"><i class="i-File-Clipboard-File--Text"></i> Forms</a>
-							<a href="#"><i class="i-Checked-User"></i> Sessions</a>
-							<a href="#"><i class="i-Ambulance"></i> Support</a>
-						</div>
-					</div>
 				</div>
 				<!-- Notificaiton -->
 				<div class="dropdown">
@@ -245,6 +233,79 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Notification if the user_id not exist -->
+		<!-- <div class="center">
+			<vs-button
+				flat
+				color="#7d33ff"
+				icon
+				@click="
+					
+				"
+			>
+				<i class="bx bx-border-top"></i> <i class="bx bx-bell"></i>
+			</vs-button>
+		</div> -->
+		<!-- Contact details if the user_id exist -->
+		<div ref="dialogWeb" class="center">
+			<vs-dialog v-model="activeDialog">
+				<template #header>
+					<h4 class="not-margin">Search Contact details = true</h4>
+				</template>
+				<div>
+					<div class="card-body text-center">
+						<vs-row class="mb-1" justify="center">
+							<vs-avatar size="80" badge badge-color="danger">
+								<img :src="'/assets/images/faces/16.jpg'" alt="" />
+							</vs-avatar>
+						</vs-row>
+						<h5 style="margin-top: 5px" class="m-0">
+							<a class="typo_link text-primary t-font-boldest">Jassica Hike</a>
+						</h5>
+						<!-- <h5 class="m-0">Jassica Hike</h5> -->
+						<p class="mt-0">UI/UX Designer</p>
+						<div class="separator-breadcrumb border-top"></div>
+						<p>
+							Lorem ipsum dolor sit amet consectetur adipisicing elit.
+							Recusandae cumque.
+						</p>
+						<button @click="UserDidntExist" class="btn btn-primary btn-rounded">
+							Add to contact
+						</button>
+						<div class="card-socials-simple mt-4">
+							<a href="">
+								<i class="i-Linkedin-2"></i>
+							</a>
+							<a href="">
+								<i class="i-Facebook-2"></i>
+							</a>
+							<a href="">
+								<i class="i-Twitter"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</vs-dialog>
+		</div>
+		<div class="center">
+			<!-- Use for toggle in mobile screen -->
+			<vs-dialog overflow-hidden v-model="activeDialogMobile">
+				<template #header>
+					<h4 class="not-margin">Search Contact</h4>
+				</template>
+				<div class="con-form">
+					<vs-input v-model="userId" placeholder="User-ID">
+						<template #icon> @ </template>
+					</vs-input>
+				</div>
+				<template #footer>
+					<div class="footer-dialog">
+						<vs-button @click="SearchDialog" block> Search </vs-button>
+					</div>
+				</template>
+			</vs-dialog>
+		</div>
 	</div>
 </template>
 
@@ -252,21 +313,71 @@
 import { mapActions, mapGetters } from "vuex";
 
 export default {
+	data() {
+		return {
+			active: 0,
+			activeDialog: false,
+			activeDialogMobile: false,
+			userId: "",
+		};
+	},
 	computed: {
 		...mapGetters({ sideBarOpenStatus: "compt/getSidebarOpen" }),
 	},
 	methods: {
+		loadingDialog() {
+			const loading = this.$vs.loading({
+				target: this.$refs.dialogWeb,
+
+				background: "secondary",
+				opacity: 0.1,
+				type: "scale",
+				color: "#662489",
+			});
+			setTimeout(() => {
+				loading.close();
+			}, 4000);
+		},
 		...mapActions(["compt/setSidebarOpen"]),
+		...mapActions(["compt/setSidenavOpen"]),
 		toggleAction() {
-            console.log("before action " + this.sideBarOpenStatus);
 			this["compt/setSidebarOpen"]();
-            console.log(this.sideBarOpenStatus);
-            // console.log(this.$store);
-            
+			this["compt/setSidenavOpen"]();
+		},
+		SearchDialog() {
+			// to open the search form dialog
+			this.activeDialog = !this.activeDialog;
+		},
+		SearchAction() {
+			// here the identity of contact after searching result true
+		},
+		UserDidntExist() {
+			this.openNotification("top-center", "#7d33ff", `<i class='bx bx-bell' ></i>`);
+		},
+		openNotification(position = null, border) {
+			const noti = this.$vs.notification({
+				border,
+				position,
+				title: "Oooppss..",
+				text: "The Contact you're looking for doesn't exist.",
+			});
 		},
 	},
 };
 </script>
 
-<style>
+
+<style >
+.not-margin {
+	margin: 0px;
+	font-weight: normal;
+	padding: 10px;
+}
+.vs-input-content {
+	margin: 10px 0px;
+	width: calc(100%);
+}
+.vs-input {
+	width: 100%;
+}
 </style>

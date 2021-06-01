@@ -17,4 +17,8 @@ class Contact extends Model
         return $this->belongsTo(User::class, 'owner_id', 'id', 'owner_id');
     }
 
+    public function conversation(){
+        return $this->belongsTo(Conversation::class);
+    }
+
 }

@@ -25,7 +25,7 @@ Route::namespace('App\Http\Controllers')->group(function(){
     Route::post('/comments', 'CommentController@store');
 });
 
-Route::middleware('auth:api')->group(function(){
+Route::middleware('auth:sanctum')->group(function(){
     Route::namespace('App\Http\Controllers')->group(function(){
         Route::get('/getcontacts', 'ContactController@index');
     });

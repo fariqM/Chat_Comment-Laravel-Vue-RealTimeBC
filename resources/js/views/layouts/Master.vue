@@ -3,9 +3,8 @@
 		<MyHeader></MyHeader>
 
 		<Sidebar></Sidebar>
-		<div class="main-content-wrap d-flex flex-column">
+		<div class="main-content-wrap d-flex flex-column" v-bind:class="{'sidenav-open': sidenavOpen}">
 			<div class="main-content">
-				
 				<transition name="fade" mode="out-in">
 					<router-view></router-view>
 				</transition>
@@ -39,6 +38,7 @@ export default {
 	},
 	computed:{
 		...mapGetters({ sidebarStatus: "compt/getSidebarOpen" }),
+		...mapGetters({ sidenavOpen: "compt/getSidenavOpen"}),
 		
 	},
 	methods:{
