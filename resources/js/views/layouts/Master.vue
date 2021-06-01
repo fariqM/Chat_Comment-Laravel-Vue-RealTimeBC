@@ -30,6 +30,7 @@ export default {
 		MyHeader,
 		MyFooter,
 	},
+	
 	beforeCreate(){
 		// console.log(window.location.href);
 		var as= window.location.href
