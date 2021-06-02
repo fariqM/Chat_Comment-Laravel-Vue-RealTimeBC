@@ -28,10 +28,11 @@ Route::namespace('App\Http\Controllers')->group(function(){
 Route::middleware('auth:sanctum')->group(function(){
     Route::namespace('App\Http\Controllers')->group(function(){
         Route::get('/getcontacts', 'ContactController@index');
+        Route::get('/getcurrent-user', 'ContactController@currentUser');
     });
 });
 
 Route::namespace('App\Http\Controllers')->group(function(){
     Route::get('/getsearch-contact/{user:id}', 'ContactController@search_contact');
-    Route::get('/get-email/{user:email}', 'ManualAuthController@getEmail');
+    Route::get('/get-email/{user:email}', 'ManualAuthController@getEmail');  
 });

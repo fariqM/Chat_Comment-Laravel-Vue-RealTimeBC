@@ -57,7 +57,7 @@ export default {
 			this.$router.push({ name: "home" }).catch((err) => {});
 			this.IsActive = true;
 			this.IsActiveChat = false;
-			console.log(this.SidebarOpen);
+			// console.log(this.SidebarOpen);
 		},
 		ChatHandler() {
 			this.$router.push({ name: "chat" }).catch((err) => {});

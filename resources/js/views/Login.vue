@@ -79,6 +79,12 @@
 							>
 								<i class="i-Mail-with-At-Sign"></i> Check Data
 							</a>
+							<a
+								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
+								@click="CheckCurrentUser"
+							>
+								<i class="i-Mail-with-At-Sign"></i> Check Current User
+							</a>
 						</div>
 					</div>
 				</div>
@@ -88,6 +94,9 @@
 </template>
 
 <script>
+import {mapActions,mapGetters} from "vuex"
+
+
 export default {
 	data() {
 		return {
@@ -100,7 +109,26 @@ export default {
 			},
 		};
 	},
+	created() {
+	},
+	computed:{
+		// ...mapGetters({CurrentUser: "currentUser/getCurrentUser"})
+	},
 	methods: {
+
+		// ...mapActions({SetCurrentUser: "currentUser/setCurrentUser"}),
+		loginTest(){
+			axios.post("/login", this.form).then(response => {
+				console.log("im in with : " + response.status);
+				// this.SetCurrentUser()
+			}).catch(e => {
+				console.log(e);
+			})
+			
+		},
+		CheckCurrentUser(){
+			console.log(this.CurrentUser);
+		},
 		showPassword() {
 			if (this.PasswordForm === "password") {
 				this.PasswordForm = "text";

@@ -87,16 +87,21 @@
 					</div>
 				</div>
 				<!-- / Mega menu -->
-				<div class="search-bar">
-					<form @submit.prevent="SearchAction">
-						<input v-model="userId" type="text" placeholder="Search" />
-					</form>
+				<vs-tooltip danger bottom not-hover border-thick v-model="activeTooltip1">
+					<div class="search-bar">
+						<form @submit.prevent="SearchAction">
+							<input v-model="userId" type="text" placeholder="Search" />
+						</form>
 
-					<i
-						@click="SearchAction"
-						class="search-icon text-muted i-Magnifi-Glass1"
-					></i>
-				</div>
+						<i
+							@click="SearchAction"
+							class="search-icon text-muted i-Magnifi-Glass1"
+						></i>
+					</div>
+					<template #tooltip>
+						  please fill the user-id
+					</template>
+				</vs-tooltip>
 			</div>
 
 			<div style="margin: auto"></div>
@@ -235,7 +240,7 @@
 		</div>
 		<!-- Contact details if the user_id exist -->
 		<div ref="dialogWeb" class="center">
-			<vs-dialog v-model="activeDialog">
+			<vs-dialog overflow-hidden v-model="activeDialog">
 				<template #header>
 					<h4 class="not-margin">Search Contact details = true</h4>
 				</template>
@@ -275,6 +280,7 @@
 				</div>
 			</vs-dialog>
 		</div>
+
 		<div class="center">
 			<!-- Use for toggle in mobile screen -->
 			<vs-dialog overflow-hidden v-model="activeDialogMobile">
@@ -302,6 +308,7 @@ import { mapActions, mapGetters } from "vuex";
 export default {
 	data() {
 		return {
+			activeTooltip1: false,
 			active: 0,
 			activeDialog: false,
 			activeDialogMobile: false,
@@ -338,35 +345,40 @@ export default {
 			this.activeDialog = !this.activeDialog;
 		},
 		SearchAction() {
-			// open loading section
-			const loading = this.$vs.loading({
-				progress: 0,
-				color: "#7d33ff",
-				type: "scale",
-			});
-			const interval = setInterval(() => {
-				if (this.progress <= 100) {
-					loading.changeProgress(this.progress++);
-				}
-			}, 10);
-			// end open loading section
-
-			axios.get("/sanctum/csrf-cookie").then((response) => {
-				axios.get(`/api/getsearch-contact/${this.userId}`).then((fun) => {
-					// close loading section
-					loading.close();
-					clearInterval(interval);
-					this.progress = 0;
-					// end close loading section
-
-					if (fun.data.data !== undefined) {
-						this.SearchData = fun.data.data;
-						this.SearchDialog();
-					} else {
-						this.UserDidntExist();
-					}
+			this.activeTooltip1 = false
+			if (this.userId == "") {
+				this.activeTooltip1 = !this.activeTooltip1;
+			} else {
+				// open loading section
+				const loading = this.$vs.loading({
+					progress: 0,
+					color: "#7d33ff",
+					type: "scale",
 				});
-			});
+				const interval = setInterval(() => {
+					if (this.progress <= 100) {
+						loading.changeProgress(this.progress++);
+					}
+				}, 10);
+				// end open loading section
+
+				axios.get("/sanctum/csrf-cookie").then((response) => {
+					axios.get(`/api/getsearch-contact/${this.userId}`).then((fun) => {
+						// close loading section
+						loading.close();
+						clearInterval(interval);
+						this.progress = 0;
+						// end close loading section
+
+						if (fun.data.data !== undefined) {
+							this.SearchData = fun.data.data;
+							this.SearchDialog();
+						} else {
+							this.UserDidntExist();
+						}
+					});
+				});
+			}
 		},
 		UserDidntExist() {
 			this.openNotification(
@@ -385,6 +397,7 @@ export default {
 		},
 		logout() {
 			const loading = this.$vs.loading({
+				text: "GOODBYE...",
 				progress: 0,
 				color: "#7d33ff",
 				type: "scale",
@@ -401,12 +414,13 @@ export default {
 						loading.close();
 						clearInterval(interval);
 						this.progress = 0;
-						this.$toast.info("Thanks for using our app.", "Goodbye! ", {
-							position: "center", icon: "i-Hand", close: false
-						});
-						setTimeout(() => {
-							window.location = "http://127.0.0.1:8000/login";
-						}, 2000);
+						this.$router.push({ name: "login.page" });
+						// this.$toast.info("Thanks for using our app.", "Goodbye! ", {
+						// 	position: "center", icon: "i-Hand", close: false
+						// });
+						// setTimeout(() => {
+						// 	window.location = "http://127.0.0.1:8000/login";
+						// }, 2000);
 						// console.log("user has logout");
 					})
 					.catch((error) => console.log(error));

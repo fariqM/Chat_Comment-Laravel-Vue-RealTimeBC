@@ -11,8 +11,6 @@
 				<transition name="fade" mode="out-in">
 					<router-view></router-view>
 				</transition>
-				<!-- {{-- @yield('main-content') --}} -->
-
 				<MyFooter></MyFooter>
 			</div>
 		</div>
@@ -23,8 +21,9 @@
 import Sidebar from "./Sidebar";
 import MyHeader from "./Header";
 import MyFooter from "./Footer";
+import CurrentUser from "../../store/auth/AuthStore";
 import CompStore from "../../store/component/ComptStore";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
 	components: {
@@ -35,27 +34,47 @@ export default {
 	data() {
 		return {
 			checking: "",
+			progress: 0,
 		};
 	},
-	// beforeRouteEnter(to, from, next) {
+	beforeRouteUpdate(to, from, next) {
+		// We are checking the authentication for every navigation or route
+		// inside the application
 		
-		
-	// 	next((vm) => {
-			
-	// 	});
-	// },
-	beforeCreate() {
-		// console.log(window.location.href);
-		var as = window.location.href;
-		if (as == "http://127.0.0.1:8000/app") {
-			// console.log("move");
-			window.location = "http://127.0.0.1:8000/unknown-page";
+		if (this.currentUser.isAuth) {
+			next();
 		} else {
-			// console.log("dont move");
+			this.unAuth("UNAUTHENTICATED.")
 		}
 	},
-	mounted() {
-		// console.log("sampaiii");
+	beforeRouteEnter(to, from, next) {
+		// Check the authentication before
+		// render the 'home' application
+		// thanks for laravel-sanctum we can easier
+		// to authenticate user through API
+		axios
+			.get("/api/getcurrent-user")
+			.then((fun) => {
+				// if user is authenticated
+				// we send those users data through the store
+				next((vm) => {
+					vm.setUser(fun.data);
+				});
+			})
+			.catch((e) => {
+				// if user is not authenticated
+				// we throw the user to login page
+				next((vm) => {
+					vm.unAuth(e.response.data.message);
+				});
+				
+			});
+	},
+	beforeCreate() {
+		var as = window.location.href;
+		if (as == "http://127.0.0.1:8000/app") {
+			window.location = "http://127.0.0.1:8000/unknown-page";
+		}
 	},
 	created() {
 		this.$store.registerModule("compt", CompStore);
@@ -64,10 +83,39 @@ export default {
 		this.$store.unregisterModule("compt");
 	},
 	computed: {
+		...mapGetters({ currentUser: "auth/getCurrentUser" }),
 		...mapGetters({ sidebarStatus: "compt/getSidebarOpen" }),
 		...mapGetters({ sidenavOpen: "compt/getSidenavOpen" }),
 	},
-	methods: {},
+	methods: {
+		// ...mapActions(["auth/setCurrentUsers"]),
+		unAuth(value) {
+			const loading = this.$vs.loading({
+				progress: 0,
+				background: "#000000",
+				text:
+					value.toUpperCase() +
+					" BUT DONT WORRY, WE WILL TAKE YOU TO SAFE PLACE :)",
+				color: "#fff",
+				type: "scale",
+			});
+			const interval = setInterval(() => {
+				if (this.progress <= 100) {
+					loading.changeProgress(this.progress++);
+				}
+			}, 20);
+
+			setTimeout(() => {
+				loading.close();
+				clearInterval(interval);
+				this.progress = 0;
+				this.$router.push({ name: "login.page" });
+			}, 2450);
+		},
+		setUser(value) {
+			this.$store.dispatch("auth/setCurrentUsers", value);
+		},
+	},
 };
 </script>
 

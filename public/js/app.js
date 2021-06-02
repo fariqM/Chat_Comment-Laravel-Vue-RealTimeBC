@@ -2126,6 +2126,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2138,7 +2145,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     };
   },
+  created: function created() {},
+  computed: {// ...mapGetters({CurrentUser: "currentUser/getCurrentUser"})
+  },
   methods: {
+    // ...mapActions({SetCurrentUser: "currentUser/setCurrentUser"}),
+    loginTest: function loginTest() {
+      axios.post("/login", this.form).then(function (response) {
+        console.log("im in with : " + response.status); // this.SetCurrentUser()
+      })["catch"](function (e) {
+        console.log(e);
+      });
+    },
+    CheckCurrentUser: function CheckCurrentUser() {
+      console.log(this.CurrentUser);
+    },
     showPassword: function showPassword() {
       if (this.PasswordForm === "password") {
         this.PasswordForm = "text";
@@ -2877,10 +2898,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      activeTooltip1: false,
       active: 0,
       activeDialog: false,
       activeDialogMobile: false,
@@ -2917,34 +2945,40 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     SearchAction: function SearchAction() {
       var _this = this;
 
-      // open loading section
-      var loading = this.$vs.loading({
-        progress: 0,
-        color: "#7d33ff",
-        type: "scale"
-      });
-      var interval = setInterval(function () {
-        if (_this.progress <= 100) {
-          loading.changeProgress(_this.progress++);
-        }
-      }, 10); // end open loading section
+      this.activeTooltip1 = false;
 
-      axios.get("/sanctum/csrf-cookie").then(function (response) {
-        axios.get("/api/getsearch-contact/".concat(_this.userId)).then(function (fun) {
-          // close loading section
-          loading.close();
-          clearInterval(interval);
-          _this.progress = 0; // end close loading section
-
-          if (fun.data.data !== undefined) {
-            _this.SearchData = fun.data.data;
-
-            _this.SearchDialog();
-          } else {
-            _this.UserDidntExist();
-          }
+      if (this.userId == "") {
+        this.activeTooltip1 = !this.activeTooltip1;
+      } else {
+        // open loading section
+        var loading = this.$vs.loading({
+          progress: 0,
+          color: "#7d33ff",
+          type: "scale"
         });
-      });
+        var interval = setInterval(function () {
+          if (_this.progress <= 100) {
+            loading.changeProgress(_this.progress++);
+          }
+        }, 10); // end open loading section
+
+        axios.get("/sanctum/csrf-cookie").then(function (response) {
+          axios.get("/api/getsearch-contact/".concat(_this.userId)).then(function (fun) {
+            // close loading section
+            loading.close();
+            clearInterval(interval);
+            _this.progress = 0; // end close loading section
+
+            if (fun.data.data !== undefined) {
+              _this.SearchData = fun.data.data;
+
+              _this.SearchDialog();
+            } else {
+              _this.UserDidntExist();
+            }
+          });
+        });
+      }
     },
     UserDidntExist: function UserDidntExist() {
       this.openNotification("top-center", "danger", "<i class='bx bx-bell' ></i>");
@@ -2963,6 +2997,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this2 = this;
 
       var loading = this.$vs.loading({
+        text: "GOODBYE...",
         progress: 0,
         color: "#7d33ff",
         type: "scale"
@@ -2978,15 +3013,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           clearInterval(interval);
           _this2.progress = 0;
 
-          _this2.$toast.info("Thanks for using our app.", "Goodbye! ", {
-            position: "center",
-            icon: "i-Hand",
-            close: false
-          });
+          _this2.$router.push({
+            name: "login.page"
+          }); // this.$toast.info("Thanks for using our app.", "Goodbye! ", {
+          // 	position: "center", icon: "i-Hand", close: false
+          // });
+          // setTimeout(() => {
+          // 	window.location = "http://127.0.0.1:8000/login";
+          // }, 2000);
+          // console.log("user has logout");
 
-          setTimeout(function () {
-            window.location = "http://127.0.0.1:8000/login";
-          }, 2000); // console.log("user has logout");
         })["catch"](function (error) {
           return console.log(error);
         });
@@ -3011,8 +3047,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Sidebar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sidebar */ "./resources/js/views/layouts/Sidebar.vue");
 /* harmony import */ var _Header__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Header */ "./resources/js/views/layouts/Header.vue");
 /* harmony import */ var _Footer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Footer */ "./resources/js/views/layouts/Footer.vue");
-/* harmony import */ var _store_component_ComptStore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../store/component/ComptStore */ "./resources/js/store/component/ComptStore.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _store_auth_AuthStore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../store/auth/AuthStore */ "./resources/js/store/auth/AuthStore.js");
+/* harmony import */ var _store_component_ComptStore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../store/component/ComptStore */ "./resources/js/store/component/ComptStore.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -3038,8 +3075,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
+
 
 
 
@@ -3053,37 +3089,89 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      checking: ""
+      checking: "",
+      progress: 0
     };
   },
-  // beforeRouteEnter(to, from, next) {
-  // 	next((vm) => {
-  // 	});
-  // },
+  beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
+    // We are checking the authentication for every navigation or route
+    // inside the application
+    if (this.currentUser.isAuth) {
+      next();
+    } else {
+      this.unAuth("UNAUTHENTICATED.");
+    }
+  },
+  beforeRouteEnter: function beforeRouteEnter(to, from, next) {
+    // Check the authentication before
+    // render the 'home' application
+    // thanks for laravel-sanctum we can easier
+    // to authenticate user through API
+    axios.get("/api/getcurrent-user").then(function (fun) {
+      // if user is authenticated
+      // we send those users data through the store
+      next(function (vm) {
+        vm.setUser(fun.data);
+      });
+    })["catch"](function (e) {
+      // if user is not authenticated
+      // we throw the user to login page
+      next(function (vm) {
+        vm.unAuth(e.response.data.message);
+      });
+    });
+  },
   beforeCreate: function beforeCreate() {
-    // console.log(window.location.href);
     var as = window.location.href;
 
     if (as == "http://127.0.0.1:8000/app") {
-      // console.log("move");
       window.location = "http://127.0.0.1:8000/unknown-page";
-    } else {// console.log("dont move");
     }
   },
-  mounted: function mounted() {// console.log("sampaiii");
-  },
   created: function created() {
-    this.$store.registerModule("compt", _store_component_ComptStore__WEBPACK_IMPORTED_MODULE_3__.default);
+    this.$store.registerModule("compt", _store_component_ComptStore__WEBPACK_IMPORTED_MODULE_4__.default);
   },
   beforeDestroy: function beforeDestroy() {
     this.$store.unregisterModule("compt");
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapGetters)({
+  computed: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_5__.mapGetters)({
+    currentUser: "auth/getCurrentUser"
+  })), (0,vuex__WEBPACK_IMPORTED_MODULE_5__.mapGetters)({
     sidebarStatus: "compt/getSidebarOpen"
-  })), (0,vuex__WEBPACK_IMPORTED_MODULE_4__.mapGetters)({
+  })), (0,vuex__WEBPACK_IMPORTED_MODULE_5__.mapGetters)({
     sidenavOpen: "compt/getSidenavOpen"
   })),
-  methods: {}
+  methods: {
+    // ...mapActions(["auth/setCurrentUsers"]),
+    unAuth: function unAuth(value) {
+      var _this = this;
+
+      var loading = this.$vs.loading({
+        progress: 0,
+        background: "#000000",
+        text: value.toUpperCase() + " BUT DONT WORRY, WE WILL TAKE YOU TO SAFE PLACE :)",
+        color: "#fff",
+        type: "scale"
+      });
+      var interval = setInterval(function () {
+        if (_this.progress <= 100) {
+          loading.changeProgress(_this.progress++);
+        }
+      }, 20);
+      setTimeout(function () {
+        loading.close();
+        clearInterval(interval);
+        _this.progress = 0;
+
+        _this.$router.push({
+          name: "login.page"
+        });
+      }, 2450);
+    },
+    setUser: function setUser(value) {
+      this.$store.dispatch("auth/setCurrentUsers", value);
+    }
+  }
 });
 
 /***/ }),
@@ -3161,8 +3249,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         name: "home"
       })["catch"](function (err) {});
       this.IsActive = true;
-      this.IsActiveChat = false;
-      console.log(this.SidebarOpen);
+      this.IsActiveChat = false; // console.log(this.SidebarOpen);
     },
     ChatHandler: function ChatHandler() {
       this.$router.push({
@@ -3995,6 +4082,163 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/store/auth/AuthActions.js":
+/*!************************************************!*\
+  !*** ./resources/js/store/auth/AuthActions.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  setCurrentUser: function setCurrentUser(state) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+      var _yield$axios$get, data;
+
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_1___default().get("/api/getcurrent-user");
+
+            case 2:
+              _yield$axios$get = _context.sent;
+              data = _yield$axios$get.data;
+              state.commit("setCurrentUser", data); // console.log("lewattt");
+
+            case 5:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
+  },
+  setCurrentUsers: function setCurrentUsers(state, payload) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              state.commit("setCurrentUser", payload); // console.log("lewattt222");
+
+            case 1:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/auth/AuthGetters.js":
+/*!************************************************!*\
+  !*** ./resources/js/store/auth/AuthGetters.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  getCurrentUser: function getCurrentUser(state) {
+    return state.currentUser;
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/auth/AuthMutations.js":
+/*!**************************************************!*\
+  !*** ./resources/js/store/auth/AuthMutations.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  setCurrentUser: function setCurrentUser(state, payload) {
+    state.currentUser = payload;
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/auth/AuthState.js":
+/*!**********************************************!*\
+  !*** ./resources/js/store/auth/AuthState.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  currentUser: {
+    uid: 0,
+    username: "",
+    email: "",
+    isActive: false,
+    isAuth: false
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/auth/AuthStore.js":
+/*!**********************************************!*\
+  !*** ./resources/js/store/auth/AuthStore.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AuthState__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AuthState */ "./resources/js/store/auth/AuthState.js");
+/* harmony import */ var _AuthGetters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AuthGetters */ "./resources/js/store/auth/AuthGetters.js");
+/* harmony import */ var _AuthMutations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AuthMutations */ "./resources/js/store/auth/AuthMutations.js");
+/* harmony import */ var _AuthActions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./AuthActions */ "./resources/js/store/auth/AuthActions.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  namespaced: true,
+  state: _AuthState__WEBPACK_IMPORTED_MODULE_0__.default,
+  mutations: _AuthMutations__WEBPACK_IMPORTED_MODULE_2__.default,
+  actions: _AuthActions__WEBPACK_IMPORTED_MODULE_3__.default,
+  getters: _AuthGetters__WEBPACK_IMPORTED_MODULE_1__.default
+});
+
+/***/ }),
+
 /***/ "./resources/js/store/chat/ChatAction.js":
 /*!***********************************************!*\
   !*** ./resources/js/store/chat/ChatAction.js ***!
@@ -4326,24 +4570,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _actions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./actions */ "./resources/js/store/comment/actions.js");
 /* harmony import */ var _mutations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mutations */ "./resources/js/store/comment/mutations.js");
 /* harmony import */ var _getters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getters */ "./resources/js/store/comment/getters.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state */ "./resources/js/store/comment/state.js");
+/* harmony import */ var _auth_AuthStore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../auth/AuthStore */ "./resources/js/store/auth/AuthStore.js");
 
 
 
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_4__.default.use(vuex__WEBPACK_IMPORTED_MODULE_5__.default);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_5__.default.Store({
+
+vue__WEBPACK_IMPORTED_MODULE_5__.default.use(vuex__WEBPACK_IMPORTED_MODULE_6__.default);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_6__.default.Store({
   state: _state__WEBPACK_IMPORTED_MODULE_3__.default,
   mutations: _mutations__WEBPACK_IMPORTED_MODULE_1__.default,
   getters: _getters__WEBPACK_IMPORTED_MODULE_2__.default,
-  module: {},
+  modules: {
+    auth: _auth_AuthStore__WEBPACK_IMPORTED_MODULE_4__.default
+  },
   actions: _actions__WEBPACK_IMPORTED_MODULE_0__.default
 }));
 
@@ -33218,6 +33466,19 @@ var render = function() {
                         _c("i", { staticClass: "i-Mail-with-At-Sign" }),
                         _vm._v(" Check Data\n\t\t\t\t\t\t")
                       ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass:
+                          "btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text",
+                        on: { click: _vm.CheckCurrentUser }
+                      },
+                      [
+                        _c("i", { staticClass: "i-Mail-with-At-Sign" }),
+                        _vm._v(" Check Current User\n\t\t\t\t\t\t")
+                      ]
                     )
                   ],
                   1
@@ -33646,50 +33907,86 @@ var render = function() {
         [_c("div"), _vm._v(" "), _c("div"), _vm._v(" "), _c("div")]
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "d-flex align-items-center" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c("div", { staticClass: "search-bar" }, [
+      _c(
+        "div",
+        { staticClass: "d-flex align-items-center" },
+        [
+          _vm._m(0),
+          _vm._v(" "),
           _c(
-            "form",
+            "vs-tooltip",
             {
-              on: {
-                submit: function($event) {
-                  $event.preventDefault()
-                  return _vm.SearchAction($event)
+              attrs: {
+                danger: "",
+                bottom: "",
+                "not-hover": "",
+                "border-thick": ""
+              },
+              scopedSlots: _vm._u([
+                {
+                  key: "tooltip",
+                  fn: function() {
+                    return [
+                      _vm._v("\n\t\t\t\t\t  please fill the user-id\n\t\t\t\t")
+                    ]
+                  },
+                  proxy: true
                 }
+              ]),
+              model: {
+                value: _vm.activeTooltip1,
+                callback: function($$v) {
+                  _vm.activeTooltip1 = $$v
+                },
+                expression: "activeTooltip1"
               }
             },
             [
-              _c("input", {
-                directives: [
+              _c("div", { staticClass: "search-bar" }, [
+                _c(
+                  "form",
                   {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.userId,
-                    expression: "userId"
-                  }
-                ],
-                attrs: { type: "text", placeholder: "Search" },
-                domProps: { value: _vm.userId },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.SearchAction($event)
+                      }
                     }
-                    _vm.userId = $event.target.value
-                  }
-                }
-              })
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.userId,
+                          expression: "userId"
+                        }
+                      ],
+                      attrs: { type: "text", placeholder: "Search" },
+                      domProps: { value: _vm.userId },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.userId = $event.target.value
+                        }
+                      }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _c("i", {
+                  staticClass: "search-icon text-muted i-Magnifi-Glass1",
+                  on: { click: _vm.SearchAction }
+                })
+              ])
             ]
-          ),
-          _vm._v(" "),
-          _c("i", {
-            staticClass: "search-icon text-muted i-Magnifi-Glass1",
-            on: { click: _vm.SearchAction }
-          })
-        ])
-      ]),
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c("div", { staticStyle: { margin: "auto" } }),
       _vm._v(" "),
@@ -33761,6 +34058,7 @@ var render = function() {
         _c(
           "vs-dialog",
           {
+            attrs: { "overflow-hidden": "" },
             scopedSlots: _vm._u([
               {
                 key: "header",
