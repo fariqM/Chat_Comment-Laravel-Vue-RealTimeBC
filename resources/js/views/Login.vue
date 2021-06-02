@@ -24,12 +24,18 @@
 								</div>
 								<div class="form-group">
 									<label for="password">Password</label>
-									<input
-										v-model="form.password"
-										id="password"
-										class="form-control form-control-rounded"
-										type="password"
-									/>
+									<div class="input-right-icon">
+										<input
+											v-model="form.password"
+											id="password"
+											class="form-control form-control-rounded"
+											v-bind:type="PasswordForm"
+										/>
+										<span @click="showPassword" class="span-right-input-icon">
+											<i class="ul-form__icon i-Eye"></i>
+										</span>
+									</div>
+									<!-- <i class="i-Eye"></i> -->
 								</div>
 								<button class="btn btn-rounded btn-primary btn-block mt-2">
 									Sign In
@@ -43,9 +49,7 @@
 							</button>
 
 							<div class="mt-3 text-center">
-								<a href="forgot.html" class="text-muted"
-									><u>Forgot Password?</u></a
-								>
+								<a href="#" class="text-muted"><u>Forgot Password?</u></a>
 							</div>
 						</div>
 					</div>
@@ -87,6 +91,7 @@
 export default {
 	data() {
 		return {
+			PasswordForm: "password",
 			contacts: [],
 			progress: 0,
 			form: {
@@ -96,10 +101,18 @@ export default {
 		};
 	},
 	methods: {
+		showPassword() {
+			if (this.PasswordForm === "password") {
+				this.PasswordForm = "text";
+			} else {
+				this.PasswordForm = "password";
+			}
+		},
 		handleLogin() {
 			// open loading section
 			const loading = this.$vs.loading({
 				progress: 0,
+				text: "A MOMENT..",
 				color: "#7d33ff",
 				type: "scale",
 			});
@@ -135,7 +148,15 @@ export default {
 							}
 						})
 						.catch((error) => {
-							console.log(error);
+							this.progress = 70;
+							this.progress = 90;
+							loading.close();
+							clearInterval(interval);
+							this.progress = 0;
+							this.$toast.error(error.response.data.message, "Oops!", {
+								position: "topCenter",
+							});
+							// console.log(error.response.data.message);
 						});
 				} catch (error) {
 					console.log(error);
@@ -144,12 +165,11 @@ export default {
 		},
 		reLogin() {
 			const loading = this.$vs.loading({
-				background: '#505050',
+				background: "#505050",
 				progress: 0,
 				color: "#fff",
 				type: "scale",
-				text:
-					"<h2>Similiar user, please logout before login with another account</h2>",
+				text: "Similiar user, please logout before login with another account",
 			});
 			const interval = setInterval(() => {
 				if (this.progress <= 100) {
@@ -168,21 +188,9 @@ export default {
 				let { data } = await axios.get("/api/getcontacts");
 
 				console.log(data);
-				// axios.get("/api/getcontacts").then((fun) => {
-				// 	console.log(fun);
-				// });
 			} catch (e) {
 				// console.log(e);
 			}
-			// axios.get("/sanctum/csrf-cookie").then((response) => {
-			// 	try {
-			// 		axios.get("/api/getcontacts").then((fun) => {
-			// 			console.log(fun);
-			// 		});
-			// 	} catch (e) {
-			// 		console.log(e);
-			// 	}
-			// });
 		},
 
 		logout() {

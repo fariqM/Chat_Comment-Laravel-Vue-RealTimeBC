@@ -2122,9 +2122,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      PasswordForm: "password",
       contacts: [],
       progress: 0,
       form: {
@@ -2134,12 +2139,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
+    showPassword: function showPassword() {
+      if (this.PasswordForm === "password") {
+        this.PasswordForm = "text";
+      } else {
+        this.PasswordForm = "password";
+      }
+    },
     handleLogin: function handleLogin() {
       var _this = this;
 
       // open loading section
       var loading = this.$vs.loading({
         progress: 0,
+        text: "A MOMENT..",
         color: "#7d33ff",
         type: "scale"
       });
@@ -2173,7 +2186,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               }
           })["catch"](function (error) {
-            console.log(error);
+            _this.progress = 70;
+            _this.progress = 90;
+            loading.close();
+            clearInterval(interval);
+            _this.progress = 0;
+
+            _this.$toast.error(error.response.data.message, "Oops!", {
+              position: "topCenter"
+            }); // console.log(error.response.data.message);
+
           });
         } catch (error) {
           console.log(error);
@@ -2184,11 +2206,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this2 = this;
 
       var loading = this.$vs.loading({
-        background: '#505050',
+        background: "#505050",
         progress: 0,
         color: "#fff",
         type: "scale",
-        text: "<h2>Similiar user, please logout before login with another account</h2>"
+        text: "Similiar user, please logout before login with another account"
       });
       var interval = setInterval(function () {
         if (_this2.progress <= 100) {
@@ -2220,10 +2242,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 3:
                 _yield$axios$get = _context.sent;
                 data = _yield$axios$get.data;
-                console.log(data); // axios.get("/api/getcontacts").then((fun) => {
-                // 	console.log(fun);
-                // });
-
+                console.log(data);
                 _context.next = 10;
                 break;
 
@@ -2351,61 +2370,172 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      PasswordForm: "password",
       formRePassword: false,
       formPassword: false,
+      progress: 0,
       theErrors: [],
       form: {
-        name: "",
+        name: "joniea",
         email: "",
-        password: "",
-        password_confirmation: ""
+        password: "rangga1822",
+        password_confirmation: "rangga1822"
       }
     };
   },
   methods: {
+    showPassword: function showPassword() {
+      if (this.PasswordForm === "password") {
+        this.PasswordForm = "text";
+      } else {
+        this.PasswordForm = "password";
+      }
+    },
     FormHandler: function FormHandler() {
       if (this.form.password_confirmation === this.form.password) {
         this.formRePassword = false;
         this.formPassword = false;
         this.RegisterAction();
       } else {
-        this.$toast.error("Password doesnt match!", "Oops,", {
-          position: "topRight"
+        this.$toast.error("Password doesnt match!", "Oops!", {
+          position: "topCenter"
         });
         this.formRePassword = true;
         this.formPassword = true;
       }
     },
-    RegisterAction: function RegisterAction() {
+    attempRegist: function attempRegist() {
       var _this = this;
 
-      axios.get("/sanctum/csrf-cookie").then(function (fun) {
-        console.log("this is the CSRF-Cookie from Sanctum : " + JSON.stringify(fun));
-
-        try {
-          axios.post("/register", _this.form).then(function (response) {
-            console.log("register success");
-            console.log(response);
-
-            if (response.status == 201) {//go to home
-            }
-          });
-        } catch (e) {
-          console.log(e);
-          _this.theErrors = e.response.data.errors;
+      var loading = this.$vs.loading({
+        background: "#505050",
+        progress: 0,
+        color: "#fff",
+        type: "scale",
+        text: "ATTEMPTING REGISTERING THE ACCOUNT"
+      });
+      var interval = setInterval(function () {
+        if (_this.progress <= 100) {
+          loading.changeProgress(_this.progress++);
         }
-      }); // try {
-      // 		axios.post("/logout", this.form).then((response) => {
-      // 			console.log("register success");
-      // 			console.log(response);
-      // 		});
-      // 	} catch (e) {
-      // 		console.log(e);
-      // 		this.theErrors = e.response.data.errors;
-      // 	}
+      }, 12);
+      axios.get("/sanctum/csrf-cookie").then(function (fun) {
+        axios.post("/register", _this.form).then(function (response) {
+          if (response.status == 201) {
+            // "success register"
+            loading.close();
+            clearInterval(interval);
+            _this.progress = 0;
+
+            _this.$toast.success("Register Succes", "Great!", {
+              position: "topCenter",
+              timeout: 1999,
+              close: false
+            });
+
+            setTimeout(function () {
+              _this.$router.push({
+                name: "home"
+              });
+            }, 1000);
+          } else if (response.status == 200) {
+            loading.close();
+            clearInterval(interval);
+            _this.progress = 0;
+
+            _this.reLogin();
+          } // console.log(response.status);
+
+        });
+      });
+    },
+    reLogin: function reLogin() {
+      var _this2 = this;
+
+      var loading = this.$vs.loading({
+        background: "#505050",
+        progress: 0,
+        color: "#fff",
+        type: "scale",
+        text: "PLEASE LOGOUT BEFORE REGISTER NEW ACCOUNT"
+      });
+      var interval = setInterval(function () {
+        if (_this2.progress <= 100) {
+          loading.changeProgress(_this2.progress++);
+        }
+      }, 30);
+      setTimeout(function () {
+        loading.close();
+        clearInterval(interval);
+        _this2.progress = 0;
+
+        _this2.$router.push({
+          name: "home"
+        });
+      }, 4000);
+    },
+    RegisterAction: function RegisterAction() {
+      var _this3 = this;
+
+      var loading = this.$vs.loading({
+        progress: 0,
+        color: "#7d33ff",
+        type: "scale",
+        text: "VERIFYING EMAIL..."
+      });
+      var interval = setInterval(function () {
+        if (_this3.progress <= 100) {
+          loading.changeProgress(_this3.progress++);
+        }
+      }, 12);
+      axios.get("/sanctum/csrf-cookie").then(function (fun) {
+        axios.get("/api/get-email/".concat(_this3.form.email)).then(function (response) {
+          // console.log(response);
+          if (response.data !== "") {
+            loading.close();
+            clearInterval(interval);
+            _this3.progress = 0;
+
+            _this3.$toast.error("Email already used.", "Oops!", {
+              position: "topCenter"
+            });
+          } else if (response.data === "") {
+            loading.close();
+            clearInterval(interval);
+            _this3.progress = 0;
+
+            _this3.attempRegist();
+          }
+        });
+      });
     }
   }
 });
@@ -32906,27 +33036,111 @@ var render = function() {
                         _vm._v("Password")
                       ]),
                       _vm._v(" "),
-                      _c("input", {
-                        directives: [
+                      _c("div", { staticClass: "input-right-icon" }, [
+                        _vm.PasswordForm === "checkbox"
+                          ? _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.password,
+                                  expression: "form.password"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              attrs: { id: "password", type: "checkbox" },
+                              domProps: {
+                                checked: Array.isArray(_vm.form.password)
+                                  ? _vm._i(_vm.form.password, null) > -1
+                                  : _vm.form.password
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a = _vm.form.password,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = null,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          _vm.form,
+                                          "password",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          _vm.form,
+                                          "password",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(_vm.form, "password", $$c)
+                                  }
+                                }
+                              }
+                            })
+                          : _vm.PasswordForm === "radio"
+                          ? _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.password,
+                                  expression: "form.password"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              attrs: { id: "password", type: "radio" },
+                              domProps: {
+                                checked: _vm._q(_vm.form.password, null)
+                              },
+                              on: {
+                                change: function($event) {
+                                  return _vm.$set(_vm.form, "password", null)
+                                }
+                              }
+                            })
+                          : _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.password,
+                                  expression: "form.password"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              attrs: { id: "password", type: _vm.PasswordForm },
+                              domProps: { value: _vm.form.password },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.form,
+                                    "password",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                        _vm._v(" "),
+                        _c(
+                          "span",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.password,
-                            expression: "form.password"
-                          }
-                        ],
-                        staticClass: "form-control form-control-rounded",
-                        attrs: { id: "password", type: "password" },
-                        domProps: { value: _vm.form.password },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.form, "password", $event.target.value)
-                          }
-                        }
-                      })
+                            staticClass: "span-right-input-icon",
+                            on: { click: _vm.showPassword }
+                          },
+                          [_c("i", { staticClass: "ul-form__icon i-Eye" })]
+                        )
+                      ])
                     ]),
                     _vm._v(" "),
                     _c(
@@ -33022,7 +33236,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "mt-3 text-center" }, [
-      _c("a", { staticClass: "text-muted", attrs: { href: "forgot.html" } }, [
+      _c("a", { staticClass: "text-muted", attrs: { href: "#" } }, [
         _c("u", [_vm._v("Forgot Password?")])
       ])
     ])
@@ -33134,7 +33348,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control form-control-rounded",
-                        attrs: { id: "username", type: "text" },
+                        attrs: { id: "username", type: "text", required: "" },
                         domProps: { value: _vm.form.name },
                         on: {
                           input: function($event) {
@@ -33172,7 +33386,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control form-control-rounded",
-                        attrs: { id: "email", type: "email" },
+                        attrs: { id: "email", type: "email", required: "" },
                         domProps: { value: _vm.form.email },
                         on: {
                           input: function($event) {
@@ -33200,28 +33414,114 @@ var render = function() {
                         _vm._v("Password")
                       ]),
                       _vm._v(" "),
-                      _c("input", {
-                        directives: [
+                      _c("div", { staticClass: "input-right-icon" }, [
+                        _vm.PasswordForm === "checkbox"
+                          ? _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.password,
+                                  expression: "form.password"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              class: { "is-invalid": _vm.formPassword },
+                              attrs: { required: "", type: "checkbox" },
+                              domProps: {
+                                checked: Array.isArray(_vm.form.password)
+                                  ? _vm._i(_vm.form.password, null) > -1
+                                  : _vm.form.password
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a = _vm.form.password,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = null,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          _vm.form,
+                                          "password",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          _vm.form,
+                                          "password",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(_vm.form, "password", $$c)
+                                  }
+                                }
+                              }
+                            })
+                          : _vm.PasswordForm === "radio"
+                          ? _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.password,
+                                  expression: "form.password"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              class: { "is-invalid": _vm.formPassword },
+                              attrs: { required: "", type: "radio" },
+                              domProps: {
+                                checked: _vm._q(_vm.form.password, null)
+                              },
+                              on: {
+                                change: function($event) {
+                                  return _vm.$set(_vm.form, "password", null)
+                                }
+                              }
+                            })
+                          : _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.form.password,
+                                  expression: "form.password"
+                                }
+                              ],
+                              staticClass: "form-control form-control-rounded",
+                              class: { "is-invalid": _vm.formPassword },
+                              attrs: { required: "", type: _vm.PasswordForm },
+                              domProps: { value: _vm.form.password },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.form,
+                                    "password",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            }),
+                        _vm._v(" "),
+                        _c(
+                          "span",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.password,
-                            expression: "form.password"
-                          }
-                        ],
-                        staticClass: "form-control form-control-rounded",
-                        class: { "is-invalid": _vm.formPassword },
-                        attrs: { type: "password" },
-                        domProps: { value: _vm.form.password },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.form, "password", $event.target.value)
-                          }
-                        }
-                      }),
+                            staticClass: "span-right-input-icon",
+                            on: { click: _vm.showPassword }
+                          },
+                          [_c("i", { staticClass: "ul-form__icon i-Eye" })]
+                        )
+                      ]),
                       _vm._v(" "),
                       _vm.theErrors.password
                         ? _c("div", { staticClass: "mt-2 text-danger" }, [
@@ -33250,7 +33550,7 @@ var render = function() {
                         ],
                         staticClass: "form-control form-control-rounded",
                         class: { "is-invalid": _vm.formRePassword },
-                        attrs: { type: "password" },
+                        attrs: { type: "password", required: "" },
                         domProps: { value: _vm.form.password_confirmation },
                         on: {
                           input: function($event) {

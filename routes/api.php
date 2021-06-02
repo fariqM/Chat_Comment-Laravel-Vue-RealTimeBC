@@ -33,4 +33,5 @@ Route::middleware('auth:sanctum')->group(function(){
 
 Route::namespace('App\Http\Controllers')->group(function(){
     Route::get('/getsearch-contact/{user:id}', 'ContactController@search_contact');
+    Route::get('/get-email/{user:email}', 'ManualAuthController@getEmail');
 });
