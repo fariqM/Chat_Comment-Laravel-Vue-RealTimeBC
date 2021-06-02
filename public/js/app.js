@@ -2945,6 +2945,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     SearchAction: function SearchAction() {
       var _this = this;
 
+      this.activeDialog = false;
       this.activeTooltip1 = false;
 
       if (this.userId == "") {

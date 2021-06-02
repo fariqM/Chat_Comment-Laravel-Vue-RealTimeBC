@@ -345,6 +345,7 @@ export default {
 			this.activeDialog = !this.activeDialog;
 		},
 		SearchAction() {
+			this.activeDialog = false
 			this.activeTooltip1 = false
 			if (this.userId == "") {
 				this.activeTooltip1 = !this.activeTooltip1;

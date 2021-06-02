@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Undefined;
 use stdClass;
 use Throwable;
 
@@ -23,23 +24,24 @@ class ContactController extends Controller
         // return optional(auth(), function($contacts){
         //     return $contacts;
         // });
-        
+
         // $contacts = auth()->user()->contacts;
 
         // dd($contacts);
         // return ContactResource::collection($contacts);
     }
-    
-    public function currentUser(){
+
+    public function currentUser()
+    {
         $user = "";
         $error = "";
 
-        try{
+        try {
             $user = auth()->user();
-        } catch(Throwable $e){
-           dd($e);
+        } catch (Throwable $e) {
+            dd($e);
         }
-        
+
 
         return response()->json([
             "log" => $error,
@@ -57,8 +59,12 @@ class ContactController extends Controller
 
     public function search_contact($id)
     {
-        return optional(User::find($id), function ($user) {
-            return new SearchContactResource($user);
-        });
+        if (is_numeric($id) == 1) {
+            return optional(User::find($id), function ($user) {
+                return new SearchContactResource($user);
+            });
+        } else {
+            return null;
+        }
     }
 }
