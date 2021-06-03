@@ -12,7 +12,7 @@
 								<img :src="'/assets/images/logo.png'" alt="" />
 							</div>
 							<h1 class="mb-3 text-18">Sign in</h1>
-							<form @submit.prevent="handleLogin">
+							<form @submit.prevent="loginTest">
 								<div class="form-group">
 									<label for="email">Email address</label>
 									<input
@@ -112,11 +112,11 @@ export default {
 	created() {
 	},
 	computed:{
-		// ...mapGetters({CurrentUser: "currentUser/getCurrentUser"})
+		...mapGetters({CurrentUser: "auth/getCurrentUser"})
 	},
 	methods: {
 
-		// ...mapActions({SetCurrentUser: "currentUser/setCurrentUser"}),
+		...mapActions({SetCurrentUser: "auth/setCurrentUser"}),
 		loginTest(){
 			axios.post("/login", this.form).then(response => {
 				console.log("im in with : " + response.status);
@@ -127,7 +127,10 @@ export default {
 			
 		},
 		CheckCurrentUser(){
-			console.log(this.CurrentUser);
+			axios.get("/api/getcurrent-user").then(response => {
+				console.log(response);
+			})
+			// console.log(this.CurrentUser);
 		},
 		showPassword() {
 			if (this.PasswordForm === "password") {
@@ -213,8 +216,7 @@ export default {
 		},
 		async CheckData() {
 			try {
-				let { data } = await axios.get("/api/getcontacts");
-
+				let { data } = await axios.get("/api/getcurrent-user");
 				console.log(data);
 			} catch (e) {
 				// console.log(e);

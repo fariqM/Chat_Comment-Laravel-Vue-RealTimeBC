@@ -20,19 +20,18 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::namespace('App\Http\Controllers')->group(function(){
+Route::namespace('App\Http\Controllers')->group(function () {
     Route::get('/comments', 'CommentController@fetchComments');
     Route::post('/comments', 'CommentController@store');
 });
 
-Route::middleware('auth:sanctum')->group(function(){
-    Route::namespace('App\Http\Controllers')->group(function(){
-        Route::get('/getcontacts', 'ContactController@index');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::namespace('App\Http\Controllers')->group(function () {
         Route::get('/getcurrent-user', 'ContactController@currentUser');
+        Route::get('/getsearch-contact/{user:id}', 'ContactController@search_contact');
     });
 });
 
-Route::namespace('App\Http\Controllers')->group(function(){
-    Route::get('/getsearch-contact/{user:id}', 'ContactController@search_contact');
-    Route::get('/get-email/{user:email}', 'ManualAuthController@getEmail');  
+Route::namespace('App\Http\Controllers')->group(function () {
+    Route::get('/get-email/{user:email}', 'ManualAuthController@getEmail');
 });

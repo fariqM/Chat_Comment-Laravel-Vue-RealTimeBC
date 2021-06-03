@@ -9,16 +9,17 @@ class Contact extends Model
 {
     use HasFactory;
 
-    public function user(){
+    public function has_user(){
         return $this->belongsTo(User::class);
     }
 
-    public function owner(){
+    public function has_owner(){
         return $this->belongsTo(User::class, 'owner_id', 'id', 'owner_id');
     }
 
     public function conversation(){
         return $this->belongsTo(Conversation::class);
     }
+    
 
 }

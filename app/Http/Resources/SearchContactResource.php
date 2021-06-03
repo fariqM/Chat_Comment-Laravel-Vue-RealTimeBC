@@ -14,6 +14,16 @@ class SearchContactResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'bio' => $this->bio,
+            'about' => $this->about,
+            'email' => $this->email,
+            'contactssss' => $this->owners()->where('owner_id', auth()->user()->id)->first(),
+
+            // 'id' => $this->id,
+
+        ];
     }
 }

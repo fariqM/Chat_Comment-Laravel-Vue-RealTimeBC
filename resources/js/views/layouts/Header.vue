@@ -87,7 +87,13 @@
 					</div>
 				</div>
 				<!-- / Mega menu -->
-				<vs-tooltip danger bottom not-hover border-thick v-model="activeTooltip1">
+				<vs-tooltip
+					danger
+					bottom
+					not-hover
+					border-thick
+					v-model="activeTooltip1"
+				>
 					<div class="search-bar">
 						<form @submit.prevent="SearchAction">
 							<input v-model="userId" type="text" placeholder="Search" />
@@ -98,9 +104,7 @@
 							class="search-icon text-muted i-Magnifi-Glass1"
 						></i>
 					</div>
-					<template #tooltip>
-						  please fill the user-id
-					</template>
+					<template #tooltip> please fill the user-id </template>
 				</vs-tooltip>
 			</div>
 
@@ -262,8 +266,31 @@
 						<p>
 							{{ SearchData.bio }}
 						</p>
-						<button @click="UserDidntExist" class="btn btn-primary btn-rounded">
-							Add to contact
+
+						<button
+							v-if="SearchData.contactssss !== null"
+							disabled
+							class="btn btn-primary btn-rounded disable"
+						>
+							Already your contact
+						</button>
+
+						<button
+							v-if="
+								SearchData.contactssss === null &&
+								SearchData.id !== this.currentUser.id
+							"
+							@click="addContact(SearchData.id)"
+							class="btn btn-primary btn-rounded"
+						>
+							Add contact
+						</button>
+
+						<button
+							v-if="SearchData.id == this.currentUser.id"
+							class="btn btn-primary btn-rounded"
+						>
+							Setting My Account
 						</button>
 						<div class="card-socials-simple mt-4">
 							<a href="">
@@ -315,85 +342,98 @@ export default {
 			userId: "",
 			SearchData: {},
 			progress: 0,
+			enterHandler: true,
 		};
 	},
 	computed: {
+		// this is for controlling the responsive sidebar
 		...mapGetters({ sideBarOpenStatus: "compt/getSidebarOpen" }),
+
+		// this is for getting our current login user from store
+		...mapGetters({ currentUser: "auth/getCurrentUser" }),
 	},
 	methods: {
-		loadingDialog() {
-			const loading = this.$vs.loading({
-				target: this.$refs.dialogWeb,
-
-				background: "secondary",
-				opacity: 0.1,
-				type: "scale",
-				color: "#662489",
-			});
-			setTimeout(() => {
-				loading.close();
-			}, 4000);
-		},
 		...mapActions(["compt/setSidebarOpen"]),
 		...mapActions(["compt/setSidenavOpen"]),
 		toggleAction() {
+			// calling 2 method above for handling sidebar and
+			// main layout to keep responsive
 			this["compt/setSidebarOpen"]();
 			this["compt/setSidenavOpen"]();
 		},
 		SearchDialog() {
 			// to open the search form dialog
+			this.enterHandler = !this.enterHandler;
 			this.activeDialog = !this.activeDialog;
 		},
 		SearchAction() {
-			this.activeDialog = false
-			this.activeTooltip1 = false
-			if (this.userId == "") {
-				this.activeTooltip1 = !this.activeTooltip1;
-			} else {
-				// open loading section
-				const loading = this.$vs.loading({
-					progress: 0,
-					color: "#7d33ff",
-					type: "scale",
-				});
-				const interval = setInterval(() => {
-					if (this.progress <= 100) {
-						loading.changeProgress(this.progress++);
-					}
-				}, 10);
-				// end open loading section
+			this.activeDialog = false;
 
-				axios.get("/sanctum/csrf-cookie").then((response) => {
-					axios.get(`/api/getsearch-contact/${this.userId}`).then((fun) => {
-						// close loading section
-						loading.close();
-						clearInterval(interval);
-						this.progress = 0;
-						// end close loading section
+			// A variable to showing tooltip
+			this.activeTooltip1 = false;
 
-						if (fun.data.data !== undefined) {
-							this.SearchData = fun.data.data;
-							this.SearchDialog();
-						} else {
-							this.UserDidntExist();
-						}
+			// first we prevent user by clicking many times each second
+			if (this.enterHandler) {
+				this.enterHandler = !this.enterHandler;
+				// if the search form is empty we showing the tooltip
+				// by make the variable to true
+				if (this.userId == "") {
+					this.enterHandler = !this.enterHandler;
+					this.activeTooltip1 = !this.activeTooltip1;
+				} else {
+					// open loading section
+					const loading = this.$vs.loading({
+						progress: 0,
+						color: "#7d33ff",
+						type: "scale",
 					});
-				});
+					const interval = setInterval(() => {
+						if (this.progress <= 100) {
+							loading.changeProgress(this.progress++);
+						}
+					}, 10);
+					// end open loading section
+
+					axios.get("/sanctum/csrf-cookie").then((response) => {
+						axios.get(`/api/getsearch-contact/${this.userId}`).then((fun) => {
+							// close loading section
+							loading.close();
+							clearInterval(interval);
+							this.progress = 0;
+							// end close loading section
+
+							if (fun.data.data !== undefined) {
+								this.SearchData = fun.data.data;
+								this.SearchDialog();
+							} else {
+								// wee set each second is for 1 enter or 1 search action
+								setTimeout(() => {
+									this.enterHandler = !this.enterHandler;
+								}, 1000);
+								// and show notification if user not exist
+								this.$toast.error("User not exist", "Oops!", {
+									position: "topCenter", icon: 'i-Close', pauseOnHover: false
+								});
+								// this.ShowNotif(
+								// 	"danger",
+								// 	"oops! ",
+								// 	"User not exist",
+								// 	"<i class='i-Close' ></i>"
+								// );
+							}
+						});
+					});
+				}
 			}
 		},
-		UserDidntExist() {
-			this.openNotification(
-				"top-center",
-				"danger",
-				`<i class='bx bx-bell' ></i>`
-			);
-		},
-		openNotification(position = null, color) {
-			const noti = this.$vs.notification({
-				color,
-				position,
-				title: "Oooppss..",
-				text: "The Contact you're looking for doesn't exist.",
+		ShowNotif(color, title, text, icon) {
+			this.$vs.notification({
+				icon: icon,
+				progress: "auto",
+				color: color,
+				position: "top-center",
+				title: title,
+				text: text,
 			});
 		},
 		logout() {
@@ -416,16 +456,12 @@ export default {
 						clearInterval(interval);
 						this.progress = 0;
 						this.$router.push({ name: "login.page" });
-						// this.$toast.info("Thanks for using our app.", "Goodbye! ", {
-						// 	position: "center", icon: "i-Hand", close: false
-						// });
-						// setTimeout(() => {
-						// 	window.location = "http://127.0.0.1:8000/login";
-						// }, 2000);
-						// console.log("user has logout");
 					})
 					.catch((error) => console.log(error));
 			});
+		},
+		addContact(id) {
+			console.log(id);
 		},
 	},
 };

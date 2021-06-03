@@ -14,14 +14,17 @@ class User extends Authenticatable
     // Relation to the contacts table with foreign-key of owner_id and relate to
     // owner_id attribute/collumn on contacts table
     // --- it means to find contact/user that owned by the current user
-    public function contacts(){
+    public function contacts()
+    {
         return $this->hasMany(Contact::class, 'owner_id', 'id');
     }
-   
+
     // Relation to the contacts table with foreign-key of user_id and relate to
     // user_id attribute/collumn on contacts table
     // --- it means to find user identity of the contact
-    public function ownedBy(){
+    public function owners()
+    {
+
         return $this->hasMany(Contact::class, 'user_id', 'id');
     }
 

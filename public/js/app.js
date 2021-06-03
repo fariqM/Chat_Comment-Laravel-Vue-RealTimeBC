@@ -2031,11 +2031,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
 //
@@ -2146,10 +2153,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   created: function created() {},
-  computed: {// ...mapGetters({CurrentUser: "currentUser/getCurrentUser"})
-  },
-  methods: {
-    // ...mapActions({SetCurrentUser: "currentUser/setCurrentUser"}),
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)({
+    CurrentUser: "auth/getCurrentUser"
+  })),
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)({
+    SetCurrentUser: "auth/setCurrentUser"
+  })), {}, {
     loginTest: function loginTest() {
       axios.post("/login", this.form).then(function (response) {
         console.log("im in with : " + response.status); // this.SetCurrentUser()
@@ -2158,7 +2167,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     CheckCurrentUser: function CheckCurrentUser() {
-      console.log(this.CurrentUser);
+      axios.get("/api/getcurrent-user").then(function (response) {
+        console.log(response);
+      }); // console.log(this.CurrentUser);
     },
     showPassword: function showPassword() {
       if (this.PasswordForm === "password") {
@@ -2258,7 +2269,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _context.prev = 0;
                 _context.next = 3;
-                return axios.get("/api/getcontacts");
+                return axios.get("/api/getcurrent-user");
 
               case 3:
                 _yield$axios$get = _context.sent;
@@ -2288,7 +2299,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
     }
-  }
+  })
 });
 
 /***/ }),
@@ -2904,6 +2915,33 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2914,84 +2952,96 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       activeDialogMobile: false,
       userId: "",
       SearchData: {},
-      progress: 0
+      progress: 0,
+      enterHandler: true
     };
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
     sideBarOpenStatus: "compt/getSidebarOpen"
+  })), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
+    currentUser: "auth/getCurrentUser"
   })),
-  methods: _objectSpread(_objectSpread(_objectSpread({
-    loadingDialog: function loadingDialog() {
-      var loading = this.$vs.loading({
-        target: this.$refs.dialogWeb,
-        background: "secondary",
-        opacity: 0.1,
-        type: "scale",
-        color: "#662489"
-      });
-      setTimeout(function () {
-        loading.close();
-      }, 4000);
-    }
-  }, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["compt/setSidebarOpen"])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["compt/setSidenavOpen"])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["compt/setSidebarOpen"])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["compt/setSidenavOpen"])), {}, {
     toggleAction: function toggleAction() {
+      // calling 2 method above for handling sidebar and
+      // main layout to keep responsive
       this["compt/setSidebarOpen"]();
       this["compt/setSidenavOpen"]();
     },
     SearchDialog: function SearchDialog() {
       // to open the search form dialog
+      this.enterHandler = !this.enterHandler;
       this.activeDialog = !this.activeDialog;
     },
     SearchAction: function SearchAction() {
       var _this = this;
 
-      this.activeDialog = false;
-      this.activeTooltip1 = false;
+      this.activeDialog = false; // A variable to showing tooltip
 
-      if (this.userId == "") {
-        this.activeTooltip1 = !this.activeTooltip1;
-      } else {
-        // open loading section
-        var loading = this.$vs.loading({
-          progress: 0,
-          color: "#7d33ff",
-          type: "scale"
-        });
-        var interval = setInterval(function () {
-          if (_this.progress <= 100) {
-            loading.changeProgress(_this.progress++);
-          }
-        }, 10); // end open loading section
+      this.activeTooltip1 = false; // first we prevent user by clicking many times each second
 
-        axios.get("/sanctum/csrf-cookie").then(function (response) {
-          axios.get("/api/getsearch-contact/".concat(_this.userId)).then(function (fun) {
-            // close loading section
-            loading.close();
-            clearInterval(interval);
-            _this.progress = 0; // end close loading section
+      if (this.enterHandler) {
+        this.enterHandler = !this.enterHandler; // if the search form is empty we showing the tooltip
+        // by make the variable to true
 
-            if (fun.data.data !== undefined) {
-              _this.SearchData = fun.data.data;
-
-              _this.SearchDialog();
-            } else {
-              _this.UserDidntExist();
-            }
+        if (this.userId == "") {
+          this.enterHandler = !this.enterHandler;
+          this.activeTooltip1 = !this.activeTooltip1;
+        } else {
+          // open loading section
+          var loading = this.$vs.loading({
+            progress: 0,
+            color: "#7d33ff",
+            type: "scale"
           });
-        });
+          var interval = setInterval(function () {
+            if (_this.progress <= 100) {
+              loading.changeProgress(_this.progress++);
+            }
+          }, 10); // end open loading section
+
+          axios.get("/sanctum/csrf-cookie").then(function (response) {
+            axios.get("/api/getsearch-contact/".concat(_this.userId)).then(function (fun) {
+              // close loading section
+              loading.close();
+              clearInterval(interval);
+              _this.progress = 0; // end close loading section
+
+              if (fun.data.data !== undefined) {
+                _this.SearchData = fun.data.data;
+
+                _this.SearchDialog();
+              } else {
+                // wee set each second is for 1 enter or 1 search action
+                setTimeout(function () {
+                  _this.enterHandler = !_this.enterHandler;
+                }, 1000); // and show notification if user not exist
+
+                _this.$toast.error("User not exist", "Oops!", {
+                  position: "topCenter",
+                  icon: 'i-Close',
+                  pauseOnHover: false
+                }); // this.ShowNotif(
+                // 	"danger",
+                // 	"oops! ",
+                // 	"User not exist",
+                // 	"<i class='i-Close' ></i>"
+                // );
+
+              }
+            });
+          });
+        }
       }
     },
-    UserDidntExist: function UserDidntExist() {
-      this.openNotification("top-center", "danger", "<i class='bx bx-bell' ></i>");
-    },
-    openNotification: function openNotification() {
-      var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      var color = arguments.length > 1 ? arguments[1] : undefined;
-      var noti = this.$vs.notification({
+    ShowNotif: function ShowNotif(color, title, text, icon) {
+      this.$vs.notification({
+        icon: icon,
+        progress: "auto",
         color: color,
-        position: position,
-        title: "Oooppss..",
-        text: "The Contact you're looking for doesn't exist."
+        position: "top-center",
+        title: title,
+        text: text
       });
     },
     logout: function logout() {
@@ -3016,18 +3066,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           _this2.$router.push({
             name: "login.page"
-          }); // this.$toast.info("Thanks for using our app.", "Goodbye! ", {
-          // 	position: "center", icon: "i-Hand", close: false
-          // });
-          // setTimeout(() => {
-          // 	window.location = "http://127.0.0.1:8000/login";
-          // }, 2000);
-          // console.log("user has logout");
-
+          });
         })["catch"](function (error) {
           return console.log(error);
         });
       });
+    },
+    addContact: function addContact(id) {
+      console.log(id);
     }
   })
 });
@@ -33247,7 +33293,7 @@ var render = function() {
                     on: {
                       submit: function($event) {
                         $event.preventDefault()
-                        return _vm.handleLogin($event)
+                        return _vm.loginTest($event)
                       }
                     }
                   },
@@ -33927,9 +33973,7 @@ var render = function() {
                 {
                   key: "tooltip",
                   fn: function() {
-                    return [
-                      _vm._v("\n\t\t\t\t\t  please fill the user-id\n\t\t\t\t")
-                    ]
+                    return [_vm._v(" please fill the user-id ")]
                   },
                   proxy: true
                 }
@@ -34145,14 +34189,44 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary btn-rounded",
-                      on: { click: _vm.UserDidntExist }
-                    },
-                    [_vm._v("\n\t\t\t\t\t\tAdd to contact\n\t\t\t\t\t")]
-                  ),
+                  _vm.SearchData.contactssss !== null
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary btn-rounded disable",
+                          attrs: { disabled: "" }
+                        },
+                        [
+                          _vm._v(
+                            "\n\t\t\t\t\t\tAlready your contact\n\t\t\t\t\t"
+                          )
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.SearchData.contactssss === null &&
+                  _vm.SearchData.id !== this.currentUser.id
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary btn-rounded",
+                          on: {
+                            click: function($event) {
+                              return _vm.addContact(_vm.SearchData.id)
+                            }
+                          }
+                        },
+                        [_vm._v("\n\t\t\t\t\t\tAdd contact\n\t\t\t\t\t")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.SearchData.id == this.currentUser.id
+                    ? _c(
+                        "button",
+                        { staticClass: "btn btn-primary btn-rounded" },
+                        [_vm._v("\n\t\t\t\t\t\tSetting My Account\n\t\t\t\t\t")]
+                      )
+                    : _vm._e(),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-socials-simple mt-4" }, [
                     _c("a", { attrs: { href: "" } }, [
