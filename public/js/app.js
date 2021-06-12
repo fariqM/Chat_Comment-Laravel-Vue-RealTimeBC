@@ -2139,6 +2139,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2160,10 +2188,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     SetCurrentUser: "auth/setCurrentUser"
   })), {}, {
     loginTest: function loginTest() {
-      axios.post("/login", this.form).then(function (response) {
-        console.log("im in with : " + response.status); // this.SetCurrentUser()
-      })["catch"](function (e) {
-        console.log(e);
+      var _this = this;
+
+      axios.get("/sanctum/csrf-cookie").then(function (fun) {
+        console.log(fun);
+        axios.post("/login", _this.form).then(function (response) {
+          console.log("im in with : " + response.status); // this.SetCurrentUser()
+        })["catch"](function (e) {
+          _this.$toast.error(e.response.data.message, "Oops!", {
+            position: "topCenter"
+          });
+        });
+      })["catch"](function (csrfError) {
+        _this.$toast.error(csrfError.response.data.message, "Oops!", {
+          position: "topCenter"
+        });
       });
     },
     CheckCurrentUser: function CheckCurrentUser() {
@@ -2179,7 +2218,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     handleLogin: function handleLogin() {
-      var _this = this;
+      var _this2 = this;
 
       // open loading section
       var loading = this.$vs.loading({
@@ -2189,22 +2228,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         type: "scale"
       });
       var interval = setInterval(function () {
-        if (_this.progress <= 100) {
-          loading.changeProgress(_this.progress++);
+        if (_this2.progress <= 100) {
+          loading.changeProgress(_this2.progress++);
         }
       }, 15); // end open loading section
 
       axios.get("/sanctum/csrf-cookie").then(function (fun) {
         try {
-          axios.post("/login", _this.form).then(function (response) {
+          axios.post("/login", _this2.form).then(function (response) {
             if (response.status == 204) {
               // close loading section
               loading.close();
               clearInterval(interval);
-              _this.progress = 0; // end close loading section
+              _this2.progress = 0; // end close loading section
               // console.log(response.status);
 
-              _this.$router.push({
+              _this2.$router.push({
                 name: "home"
               });
             } // status 200 is when the token is same with last auth
@@ -2212,19 +2251,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 // close loading section
                 loading.close();
                 clearInterval(interval);
-                _this.progress = 0;
+                _this2.progress = 0;
 
-                _this.reLogin(); // end close loading section
+                _this2.reLogin(); // end close loading section
 
               }
           })["catch"](function (error) {
-            _this.progress = 70;
-            _this.progress = 90;
+            _this2.progress = 70;
+            _this2.progress = 90;
             loading.close();
             clearInterval(interval);
-            _this.progress = 0;
+            _this2.progress = 0;
 
-            _this.$toast.error(error.response.data.message, "Oops!", {
+            _this2.$toast.error(error.response.data.message, "Oops!", {
               position: "topCenter"
             }); // console.log(error.response.data.message);
 
@@ -2235,7 +2274,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     reLogin: function reLogin() {
-      var _this2 = this;
+      var _this3 = this;
 
       var loading = this.$vs.loading({
         background: "#505050",
@@ -2245,16 +2284,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         text: "Similiar user, please logout before login with another account"
       });
       var interval = setInterval(function () {
-        if (_this2.progress <= 100) {
-          loading.changeProgress(_this2.progress++);
+        if (_this3.progress <= 100) {
+          loading.changeProgress(_this3.progress++);
         }
       }, 30);
       setTimeout(function () {
         loading.close();
         clearInterval(interval);
-        _this2.progress = 0;
+        _this3.progress = 0;
 
-        _this2.$router.push({
+        _this3.$router.push({
           name: "home"
         });
       }, 3000);
@@ -3143,7 +3182,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
     // We are checking the authentication for every navigation or route
     // inside the application
-    if (this.currentUser.isAuth) {
+    if (this.currentUser.id !== 0) {
       next();
     } else {
       this.unAuth("UNAUTHENTICATED.");
@@ -3163,9 +3202,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     })["catch"](function (e) {
       // if user is not authenticated
       // we throw the user to login page
-      next(function (vm) {
-        vm.unAuth(e.response.data.message);
-      });
+      window.location = "http://127.0.0.1:8000/login";
     });
   },
   beforeCreate: function beforeCreate() {
@@ -4040,6 +4077,7 @@ var app = new Vue({
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"); // import 'vue-tel-input/dist/vue-tel-input.css';
 
+axios.defaults.withCredentials = true;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // window.axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // window.axios.defaults.headers.common.crossDomain = true;
 // window.axios.defaults.baseURL = '/api';
@@ -33480,7 +33518,7 @@ var render = function() {
                       "router-link",
                       {
                         staticClass:
-                          "btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text",
+                          "\n\t\t\t\t\t\t\t\tbtn\n\t\t\t\t\t\t\t\tbtn-rounded\n\t\t\t\t\t\t\t\tbtn-outline-primary\n\t\t\t\t\t\t\t\tbtn-outline-email\n\t\t\t\t\t\t\t\tbtn-block\n\t\t\t\t\t\t\t\tbtn-icon-text\n\t\t\t\t\t\t\t",
                         attrs: { to: { name: "register.page" } }
                       },
                       [
@@ -33493,7 +33531,7 @@ var render = function() {
                       "router-link",
                       {
                         staticClass:
-                          "btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text",
+                          "\n\t\t\t\t\t\t\t\tbtn\n\t\t\t\t\t\t\t\tbtn-rounded\n\t\t\t\t\t\t\t\tbtn-outline-primary\n\t\t\t\t\t\t\t\tbtn-outline-email\n\t\t\t\t\t\t\t\tbtn-block\n\t\t\t\t\t\t\t\tbtn-icon-text\n\t\t\t\t\t\t\t",
                         attrs: { to: { name: "home" } }
                       },
                       [
@@ -33506,7 +33544,7 @@ var render = function() {
                       "a",
                       {
                         staticClass:
-                          "btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text",
+                          "\n\t\t\t\t\t\t\t\tbtn\n\t\t\t\t\t\t\t\tbtn-rounded\n\t\t\t\t\t\t\t\tbtn-outline-primary\n\t\t\t\t\t\t\t\tbtn-outline-email\n\t\t\t\t\t\t\t\tbtn-block\n\t\t\t\t\t\t\t\tbtn-icon-text\n\t\t\t\t\t\t\t",
                         on: { click: _vm.CheckData }
                       },
                       [
@@ -33519,7 +33557,7 @@ var render = function() {
                       "a",
                       {
                         staticClass:
-                          "btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text",
+                          "\n\t\t\t\t\t\t\t\tbtn\n\t\t\t\t\t\t\t\tbtn-rounded\n\t\t\t\t\t\t\t\tbtn-outline-primary\n\t\t\t\t\t\t\t\tbtn-outline-email\n\t\t\t\t\t\t\t\tbtn-block\n\t\t\t\t\t\t\t\tbtn-icon-text\n\t\t\t\t\t\t\t",
                         on: { click: _vm.CheckCurrentUser }
                       },
                       [

@@ -9,7 +9,7 @@ window.axios = require('axios');
 window.moment = require('moment')
 
 // import 'vue-tel-input/dist/vue-tel-input.css';
-
+axios.defaults.withCredentials = true;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // window.axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // window.axios.defaults.headers.common.crossDomain = true;

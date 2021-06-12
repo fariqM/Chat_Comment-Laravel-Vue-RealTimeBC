@@ -62,25 +62,53 @@
 					>
 						<div class="pr-3 auth-right">
 							<router-link
-								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
+								class="
+									btn
+									btn-rounded
+									btn-outline-primary
+									btn-outline-email
+									btn-block
+									btn-icon-text
+								"
 								:to="{ name: 'register.page' }"
 							>
 								<i class="i-Mail-with-At-Sign"></i> Sign up with Email
 							</router-link>
 							<router-link
-								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
+								class="
+									btn
+									btn-rounded
+									btn-outline-primary
+									btn-outline-email
+									btn-block
+									btn-icon-text
+								"
 								:to="{ name: 'home' }"
 							>
 								<i class="i-Mail-with-At-Sign"></i> View Inside
 							</router-link>
 							<a
-								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
+								class="
+									btn
+									btn-rounded
+									btn-outline-primary
+									btn-outline-email
+									btn-block
+									btn-icon-text
+								"
 								@click="CheckData"
 							>
 								<i class="i-Mail-with-At-Sign"></i> Check Data
 							</a>
 							<a
-								class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text"
+								class="
+									btn
+									btn-rounded
+									btn-outline-primary
+									btn-outline-email
+									btn-block
+									btn-icon-text
+								"
 								@click="CheckCurrentUser"
 							>
 								<i class="i-Mail-with-At-Sign"></i> Check Current User
@@ -94,8 +122,7 @@
 </template>
 
 <script>
-import {mapActions,mapGetters} from "vuex"
-
+import { mapActions, mapGetters } from "vuex";
 
 export default {
 	data() {
@@ -109,27 +136,39 @@ export default {
 			},
 		};
 	},
-	created() {
-	},
-	computed:{
-		...mapGetters({CurrentUser: "auth/getCurrentUser"})
+	created() {},
+	computed: {
+		...mapGetters({ CurrentUser: "auth/getCurrentUser" }),
 	},
 	methods: {
-
-		...mapActions({SetCurrentUser: "auth/setCurrentUser"}),
-		loginTest(){
-			axios.post("/login", this.form).then(response => {
-				console.log("im in with : " + response.status);
-				// this.SetCurrentUser()
-			}).catch(e => {
-				console.log(e);
-			})
-			
+		...mapActions({ SetCurrentUser: "auth/setCurrentUser" }),
+		loginTest() {
+			axios
+				.get("/sanctum/csrf-cookie")
+				.then((fun) => {
+					console.log(fun);
+					axios
+						.post("/login", this.form)
+						.then((response) => {
+							console.log("im in with : " + response.status);
+							// this.SetCurrentUser()
+						})
+						.catch((e) => {
+							this.$toast.error(e.response.data.message, "Oops!", {
+								position: "topCenter",
+							});
+						});
+				})
+				.catch((csrfError) => {
+					this.$toast.error(csrfError.response.data.message, "Oops!", {
+						position: "topCenter",
+					});
+				});
 		},
-		CheckCurrentUser(){
-			axios.get("/api/getcurrent-user").then(response => {
+		CheckCurrentUser() {
+			axios.get("/api/getcurrent-user").then((response) => {
 				console.log(response);
-			})
+			});
 			// console.log(this.CurrentUser);
 		},
 		showPassword() {

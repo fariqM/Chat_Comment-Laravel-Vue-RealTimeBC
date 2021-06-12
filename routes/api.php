@@ -34,4 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::namespace('App\Http\Controllers')->group(function () {
     Route::get('/get-email/{user:email}', 'ManualAuthController@getEmail');
+    Route::get('/comments', 'CommentController@fetchComments');
+    Route::post('/comments', 'CommentController@store');
+    Route::get('/bingu/getcurrent-user', 'ContactController@bingu');
 });

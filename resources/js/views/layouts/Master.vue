@@ -41,7 +41,7 @@ export default {
 		// We are checking the authentication for every navigation or route
 		// inside the application
 		
-		if (this.currentUser.isAuth) {
+		if (this.currentUser.id !== 0) {
 			next();
 		} else {
 			this.unAuth("UNAUTHENTICATED.")
@@ -59,14 +59,12 @@ export default {
 				// we send those users data through the store
 				next((vm) => {
 					vm.setUser(fun.data);
-				});
+				});	
 			})
 			.catch((e) => {
 				// if user is not authenticated
 				// we throw the user to login page
-				next((vm) => {
-					vm.unAuth(e.response.data.message);
-				});
+				window.location = "http://127.0.0.1:8000/login"
 				
 			});
 	},
